@@ -1,0 +1,39 @@
+{
+  "name": "nodeplate",
+  "version": "1.0.0",
+  "description": "Node boilerplate for servers",
+  "repository": "https://github.com/ivanseidel/mean-boilerplate",
+  "README": "none",
+  "engines": {
+    "node": "0.12.x"
+  },
+  "main": "server.js",
+  "scripts": {
+    "test": "make test",
+    "start": "./node_modules/.bin/forever --minUptime=5000 --spinSleepTime=5000 server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "async": "1.2.1",
+    "body-parser": "1.13.1",
+    "compression": "1.5.0",
+    "connect-flash": "0.1.1",
+    "connect-mongo": "0.8.1",
+    "cookie-parser": "1.3.5",
+    "cookie-session": "1.1.0",
+    "csurf": "1.8.3",
+    "express": "4.12.4",
+    "express-session": "1.11.3",
+    "forever": "^0.14.1",
+    "method-override": "2.3.3",
+    "mongoose": "4.0.6",
+    "mongoose-timestamp": "0.4.0",
+    "mongoose-user": "0.0.1",
+    "morgan": "1.6.0"
+  },
+  "devDependencies": {
+    "bower": "latest",
+    "bower-installer": "latest"
+  }
+}
