@@ -1,0 +1,671 @@
+/*
+	******
+	RESPONSIVE LAYOUT
+	******
+*/
+
+@media all and (max-width: 992px) {
+	html{
+		zoom: 0.4;
+	}
+}
+
+@media all and (min-width: 992px) and (max-width: 1400px) {
+	html{
+		/*zoom: 0.5;*/
+	}
+}
+
+@media all and (min-width: 1400px) {
+	html{
+		/*zoom: 0.8;*/
+		/*zoom: 0.9;*/
+	}
+}
+
+/*
+	******
+	FONTS
+	******
+*/
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Lato Light'), local('Lato-Light'), url(/fonts/Lato-Light.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'), local('Lato-Regular'), url(/fonts/Lato-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Lato Bold'), local('Lato-Bold'), url(/fonts/Lato-Bold.ttf) format('truetype');
+}
+
+/*
+	******
+	TEMPLATE
+	******
+*/
+
+body {
+    overflow: hidden;
+    background-color: #333;
+    font-family: 'Lato', sans-serif;
+}
+
+#wrapper{
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+#pages{
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	right: 0px;
+	bottom: 160px;
+	min-height: 800px;
+	height: auto;
+}
+
+.pt-page {
+	background-color: #F0F0F0;
+}
+
+#page-navigation{
+	position: fixed;
+	width: 100%;
+	bottom: 150px;
+	text-align: center;
+	z-index: 0;
+}
+
+#page-navigation ul{
+	display: inline-block;
+	padding: 20px 30px;
+	background-color: rgba(0,0,0,0.3);
+	-webkit-border-radius: 120px 120px 0 0;
+			border-radius: 120px 120px 0 0;
+
+}
+
+#page-navigation ul a{
+	/*border: solid 4px rgba(0,0,0,0.2);*/
+}
+
+footer {
+	position: fixed;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	height: 160px;
+	z-index: 5;
+
+	background-color: #E6E6E6;
+	-webkit-box-shadow: 0 5px 30px 0 #222222;
+			box-shadow: 0 5px 30px 0 #222222;
+
+	background: #ffffff; /* Old browsers */
+	background: -moz-linear-gradient(top,  #ffffff 0%, #f6f6f6 47%, #ededed 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff),
+		color-stop(47%,#f6f6f6), color-stop(100%,#ededed)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #ffffff 0%,#f6f6f6 47%,#ededed 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff',
+		endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+
+}
+
+footer .logo{
+	position: relative;
+	float: left;
+	height: 100%;
+}
+
+footer .logo img{
+	position: relative;
+	height: 100%;
+	padding: 10px;
+	background-color: #FFF;
+	-webkit-box-shadow: -2px 5px 20px 0 #222222;
+			box-shadow: -2px 5px 20px 0 #222222;
+}
+
+footer .logo::before {
+	position: absolute;
+	content: "";
+	width: 50px;
+	height: 50px;
+	background: #FFF;
+	left: 100%;
+	right: 0px;
+	top: 50%;
+	margin: -20px 0 0 -25px;
+	-webkit-transform: rotate(45deg);
+	-moz-transform: rotate(45deg);
+	-ms-transform: rotate(45deg);
+	transform: rotate(45deg);
+
+	-webkit-box-shadow: 0px 0px 10px -2px #444;
+			box-shadow: 0px 0px 10px -2px #444;
+}
+
+footer .title{
+	position: relative;
+	/*float: left;*/
+	line-height: 160px;
+	margin: 0px;
+	left: 60px;
+	font-size: 90px;
+	font-weight: 400;
+	color: #888;
+	font-family: 'Lato', sans-serif;
+}
+
+footer > .subtitle{
+	display: block;
+	float: right;
+	line-height: 120px;
+	padding-right: 30px;
+	font-size: 51px;
+	color: #B0B0B0;
+	margin-top: 0px;
+}
+
+footer .footnote{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	margin: 0 30px 10px;
+}
+
+/*
+	******
+	Helper classes
+	******
+*/
+.shadow-xs{
+	-webkit-box-shadow: 0 0 10px 0 #000;
+			box-shadow: 0 0 10px 0 #000;
+}
+
+.shadow,
+.shadow-md{
+	-webkit-box-shadow: 0 0 20px 0 #000;
+			box-shadow: 0 0 20px 0 #000;
+}
+
+.shadow-lg{
+	-webkit-box-shadow: 0 0 30px 0 #000;
+			box-shadow: 0 0 30px 0 #000;
+}
+
+/*
+	******
+	Tables layout
+	******
+*/
+
+.table-pretty{
+	width: 100%;
+	text-align: left;
+	background-color: #FFFFFF;
+}
+.table-pretty thead{
+	background-color: #F0F0F0;
+	border-bottom: 2px solid #888;
+}
+.table-pretty th,
+.table-pretty td{
+	padding: 5px 10px;
+	font-size: 14px;
+	font-family: 'Helvetica Neue', 'Lato', 'Helvetica';
+}
+.table-pretty th{
+	font-weight: bold;
+	text-align: center;
+}
+.table-pretty tbody tr:nth-child(2n) td{
+	background-color: #EEEEEE !important;
+}
+.table-pretty tr:not(:last-child){
+	border-bottom: 1px solid #EEE;
+	color: #444;
+}
+
+/* BLUE Table Template*/
+.table-blue thead{
+	color: #247F74 !important;
+	border-bottom-color: #247F74 !important;
+}
+
+/* BLUE Table Template*/
+.table-orange thead{
+	color: #D68A30 !important;
+	border-bottom-color: #D68A30 !important;
+}
+
+/*
+	******
+	BOARD layout
+	******
+*/
+.board{
+}
+
+.board .board-heading{
+	padding: 10px 15px;
+	background-color: #888;
+	color: #F4F4F4;
+}
+
+.board-heading h2,
+.board-heading h3{
+	margin: 0px;
+	font-family: 'Lato', sans-serif;
+}
+
+.board-heading.heading-lg{
+	font-weight: 900;
+	padding: 15px 15px;
+	background-color: #666 !important;
+	text-align: center;
+}
+
+/*Fix for page indicator in headings (adjust vertical center) */
+.board-heading .dotstyle{
+	margin-top: 4px;
+	/*padding: 10px 0px;*/
+	/*zoom: 0.7;*/
+}
+
+/* BOARD ORANGE template */
+.heading-orange{
+	background-color: #F5AB43 !important;
+}
+.heading-lg.heading-orange{
+	background-color: #D68A30 !important;
+}
+
+/*
+	Fix for twitter bootstrap grid system, we don't want spaces between grids
+*/
+.no-space [class*="col-"] {
+	padding-left: 0px;
+	padding-right: 0px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+.no-space [class*="row"] {
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+/*
+	******
+	Lost connection indicator
+	******
+*/
+/* Effect 10: Corner indicator */
+.lost-connection {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 200px;
+	height: 200px;
+	background: #ed4e6e;
+	-webkit-transition: -webkit-transform 0.3s;
+	transition: transform 0.3s;
+	-webkit-transform: translateX(100%) translateY(-100%) rotate(45deg);
+	transform: translateX(100%) translateY(-100%) rotate(45deg);
+	pointer-events: none;
+}
+
+.lost-connection.animate {
+	-webkit-transform: translateX(50%) translateY(-50%) rotate(45deg);
+	transform: translateX(50%) translateY(-50%) rotate(45deg);
+}
+
+.lost-connection > div{
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	text-align: center;
+	color: rgba(255,255,255,0.6);
+}
+
+.lost-connection > div > span{
+	font-size: 400%;
+}
+
+/*
+	******
+	Game Round and Match commons
+	******
+*/
+
+.title-top-lg{
+	position: absolute;
+	top: 0px;
+	height: 120px;
+	width: 480px;
+	margin-left: -240px;
+	left: 50%;
+	
+	-webkit-border-radius: 0 0 120px 120px;
+			border-radius: 0 0 120px 120px;
+
+	line-height: 110px;
+	font-size: 70px;
+	text-align: center;
+}
+
+.title-top-xs{
+	position: absolute;
+	top: 0px;
+	height: 80px;
+	/*width: 480px;*/
+	/*margin-left: -240px;*/
+	/*left: 50%;*/
+	
+	-webkit-border-radius: 0 0 120px 120px;
+			border-radius: 0 0 120px 120px;
+
+	line-height: 75px;
+	font-size: 50px;
+	text-align: center;
+}
+
+/*
+	******
+	Flag animation and comons
+	******
+*/
+
+.flag-3d{
+	position: absolute;
+
+	   -moz-perspective: 2000;
+	-webkit-perspective: 2000;
+		 -o-perspective: 2000;
+		-ms-perspective: 2000;
+			perspective: 2000;
+}
+.flag-3d .flag{
+	/*   -moz-filter: blur(10px);
+	-webkit-filter: blur(10px);
+		 -o-filter: blur(10px);
+		-ms-filter: blur(10px);
+	*/		filter: blur(10px);
+
+	transition: all 1s ease-in-out;
+	opacity: 0.6;
+	z-index: 0;
+}
+
+.flag-3d-left .flag{
+
+	-webkit-transform-origin: 0 50%;
+	   -moz-transform-origin: 0 50%;
+		-ms-transform-origin: 0 50%;
+		 -o-transform-origin: 0 50%;
+			transform-origin: 0 50%;
+
+	-webkit-transform: /*translateZ(-1000px)*/ rotateY(45deg);
+	   -moz-transform: /*translateZ(-1000px)*/ rotateY(45deg);
+		-ms-transform: /*translateZ(-1000px)*/ rotateY(45deg);
+		 -o-transform: /*translateZ(-1000px)*/ rotateY(45deg);
+			transform: /*translateZ(-1000px)*/ rotateY(45deg);
+
+	border-radius: 0 10% 10% 0;
+}
+
+.flag-3d-right .flag{
+
+	-webkit-transform-origin: 100% 50%;
+	   -moz-transform-origin: 100% 50%;
+		-ms-transform-origin: 100% 50%;
+		 -o-transform-origin: 100% 50%;
+			transform-origin: 100% 50%;
+
+	-webkit-transform: /*translateZ(-1000px)*/ rotateY(-45deg);
+	   -moz-transform: /*translateZ(-1000px)*/ rotateY(-45deg);
+		-ms-transform: /*translateZ(-1000px)*/ rotateY(-45deg);
+		 -o-transform: /*translateZ(-1000px)*/ rotateY(-45deg);
+			transform: /*translateZ(-1000px)*/ rotateY(-45deg);
+
+	border-radius: 10% 0 0 10%;
+}
+
+/*.flag-3d.show .flag,*/
+.flag-3d-left.flag-hide .flag{
+	-webkit-transform: /*translateZ(-1000px)*/ rotateY(120deg);
+	   -moz-transform: /*translateZ(-1000px)*/ rotateY(120deg);
+		-ms-transform: /*translateZ(-1000px)*/ rotateY(120deg);
+		 -o-transform: /*translateZ(-1000px)*/ rotateY(120deg);
+			transform: /*translateZ(-1000px)*/ rotateY(120deg);
+}
+
+.flag-3d-right.flag-hide .flag{
+	-webkit-transform: /*translateZ(-1000px)*/ rotateY(-120deg);
+	   -moz-transform: /*translateZ(-1000px)*/ rotateY(-120deg);
+		-ms-transform: /*translateZ(-1000px)*/ rotateY(-120deg);
+		 -o-transform: /*translateZ(-1000px)*/ rotateY(-120deg);
+			transform: /*translateZ(-1000px)*/ rotateY(-120deg);
+	   
+}
+
+
+/*
+	******
+	DOT NAVIGATION STYLES
+	******
+*/
+.dotstyle ul {
+	position: relative;
+	display: inline-block;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	cursor: default;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.dotstyle li {
+	position: relative;
+	display: block;
+	float: left;
+	margin: 0 16px;
+	width: 12px;
+	height: 12px;
+	cursor: pointer;
+}
+
+.dotstyle li a {
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	outline: none;
+	border-radius: 50%;
+	background-color: #fff;
+	background-color: rgba(255, 255, 255, 0.3);
+	text-indent: -999em; /* make the text accessible to screen readers */
+	cursor: pointer;
+	position: absolute;
+}
+
+.dotstyle li a:focus {
+	outline: none;
+}
+
+/* Individual styles and effects */
+
+/* Fill up */
+
+.dotstyle-fillup li a {
+	overflow: hidden;
+	background-color: transparent;
+	box-shadow: inset 0 0 0 2px white;
+	-webkit-transition: background 0.3s ease;
+	transition: background 0.3s ease;
+}
+
+.dotstyle-fillup li a::after {
+	content: '';
+	position: absolute;
+	bottom: 0;
+	height: 0;
+	left: 0;
+	width: 100%;
+	background-color: #fff;
+	box-shadow: 0 0 1px #fff;
+	-webkit-transition: height 0.3s ease;
+	transition: height 0.3s ease;
+}
+
+.dotstyle-fillup li a:hover,
+.dotstyle-fillup li a:focus {
+	background-color: rgba(0, 0, 0, 0.2);
+}
+
+.dotstyle-fillup li.current a::after {
+	height: 100%;
+}
+
+/* Scale up */
+
+.dotstyle-scaleup li a {
+	-webkit-transition: -webkit-transform 0.3s ease, background-color 0.3s ease;
+	transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.dotstyle-scaleup li a:hover,
+.dotstyle-scaleup li a:focus {
+	background-color: white;
+}
+
+.dotstyle-scaleup li.current a {
+	background-color: white;
+	-webkit-transform: scale(1.5);
+	transform: scale(1.5);
+}
+
+/*
+	******
+	Game Round classes
+	******
+*/
+/*.round {
+	background-color: #F4F4F4;
+	zoom: 1.2;
+}
+
+.round .flag,
+.round .flag-3d{
+	height: 100%;
+	z-index: 0;
+}
+
+.round .timer{
+	font-weight: 100;
+	background-color: #CF4857;
+	color: #F0F0F0;
+}
+
+.round .field-top{
+	margin-left: -380px;
+	background-color: #65B236;
+	color: #F0F0F0;	
+}
+
+.round .table-name{
+	left: 50%;
+	margin-left: 100px;
+	padding-left: 150px;
+	padding-right: 50px;
+	font-weight: 100;
+	background-color: #AF3144;
+	color: #F0F0F0;
+}
+
+.round .info{
+	position: absolute;
+	left: 30%;
+	top: 50%;
+	height: 220px;
+	margin-top: -110px;
+	z-index: 999;
+
+	zoom: 1.2;
+}
+
+.round .round-name{
+	position: relative;
+	float: left;
+	width: 380px;
+	height: 120px;
+
+	line-height: 120px;
+	font-size: 85px;
+	font-weight: 700;
+	padding-left: 30px;
+	padding-right: 40px;
+
+	background-color: #AF3144;
+	color: #F0F0F0;
+}
+
+.round .round-number{
+	position: relative;
+	float: left;
+	width: 120px;
+	height: 120px;
+
+	text-align: center;
+	line-height: 120px;
+	font-size: 85px;
+	font-weight: 700;
+
+	background-color: #CF4857;
+	color: #F0F0F0;
+}
+
+.round .round-team{
+	position: relative;
+	clear: both;
+	height: 100px;
+
+	line-height: 100px;
+	font-size: 65px;
+
+	padding-left: 30px;
+	padding-right: 30px;
+	font-weight: 100;
+
+	background-color: #CF4857;
+	color: #F0F0F0;
+	-webkit-box-shadow: 0 0 30px -5px #222;
+			box-shadow: 0 0 30px -5px #222;
+}*/
+
+
+.bg-orange{ background-color: #FF8C00; }
+.bg-blue{ background-color: #00CDCD; }
+.bg-purple{ background-color: #B452CD; }
+.bg-red{ background-color: #DC143C; }

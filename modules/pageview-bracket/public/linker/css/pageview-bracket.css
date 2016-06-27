@@ -1,0 +1,27 @@
+/*
+	******
+	Bracket classes
+	******
+*/
+.pageview-bracket{
+	background-color: #f0ad4e !important;
+}
+
+.pageview-bracket > .container{
+}
+
+.pageview-bracket .bracket-container{
+	position: absolute;
+	zoom: 2;
+	display: inline-block;
+	/*position: relative;*/
+	left: 50%;
+	top: 50%;
+}
+
+.bracket-container .label{
+	font-weight: normal;
+	line-height: inherit; 
+	color: #000; 
+	text-align: center;
+}

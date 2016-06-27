@@ -1,0 +1,5 @@
+<div class="match-item match-playing">
+	<div class="match-place">Day {{match.day}}, {{match.hour}}</div>
+	<div class="match-teams">{{match.teamA ? match.teamA.name : ''}} <strong class="text-danger">{{match.teamAScore}}</strong> × <strong class="text-danger">{{match.teamBScore}}</strong> {{match.teamB ? match.teamB.name : ''}}</div>
+	<div class="match-field">{{match.field}}</div>
+</div>

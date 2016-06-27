@@ -1,0 +1,30 @@
+<div class="col-md-8 col-md-offset-2" style="padding-top: 20px;">
+	<div class="alert alert-warning">
+		<strong>You need to login first!</strong><br/>
+		Please enter the Password for the League and click Login.
+	</div>
+
+	<% if(wrongPassword) { %>
+		<div class="alert alert-danger">
+			<strong>Wrong Password</strong><br/>
+		</div>
+	<% } %>
+</div>
+
+<div class="col-md-8 col-md-offset-2">
+
+	<div class="well">
+		<form class="form-signin" role="form" method="POST">
+			<h2 class="form-signin-heading">Please sign in to "<%= _projectName  %>"</h2>
+			<input type="password" id="password" name="password" class="form-control input-lg" placeholder="Password" required autofocus><br/>
+			<button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		</form>
+
+		<hr/>
+
+		<p class="lead">Or, select one of the following public actions:</p>
+
+		<a href="/views/view" target="_blank" class="btn btn-sm btn-info btns-block" type="submit">Open view list</a>
+	</div>
+
+</div>

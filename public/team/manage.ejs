@@ -1,0 +1,399 @@
+<style type="text/css">
+.fixXEditableTextArea{
+	white-space: nowrap !important;
+	border-bottom: 1px solid #46B8ED;
+}
+</style>
+
+<!-- CONTENT -->
+<div class="row clearfix">
+	
+	<div class="col-md-12 column" id="groups-container">
+
+		<div class="panel panel-info" id="team-view">
+			<div class="panel-heading">
+				<!-- Team tools -->
+				<div class="pull-right">
+					<button class="btn-team-refresh btn btn-xs btn-info">
+						<span class="glyphicon glyphicon-refresh"></span> Refresh
+					</button>
+					<!-- <button class="btn-teams-edit btn btn-xs btn-info">
+						<span class="glyphicon glyphicon-pencil"></span> Edit All
+					</button> -->
+					<button type="button" class="btn-team-create btn btn-success btn-xs">
+						<span class="glyphicon glyphicon-plus"></span> Create Team
+					</button>
+				</div>
+
+				<span class="panel-title">
+					<strong>Teams</strong> <small class="team-count"></small>
+				</span>
+			</div>
+
+			<table class="team-table table table-striped table-responsive table-hover">
+				<thead>
+					<tr>
+						<th>Country</th>
+						<th>Name</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+
+		</div>
+
+	</div>
+</div>
+<!--/ CONTENT -->
+
+<!-- EDIT MODAL -->
+<div id="modal-edit" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Edit <small class="model-name"></small></h4>
+			</div>
+			<div class="modal-body">
+
+				<!-- Alert about wrong syntax -->
+				<div class="alert alert-warning">
+					<button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+					<strong>Ops!</strong> Looks like there is an syntax error in your json...
+				</div>
+
+				<!-- Edit field containing json -->
+				<div class="form-group">
+					<textarea class="model-json form-control" rows="10"></textarea>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<!-- Close and Confirm buttons -->
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn-confirm-edit btn btn-success">
+					<span class="glyphicon glyphicon-ok"></span> Save
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--/ EDIT MODAL -->
+
+<script type="text/html" id="template-team-view">
+	<td><span class="team-country" data-name="country"></span></td>
+	<td><span class="team-name"    data-name="name">{{name}}</span></td>
+	<td>
+		<!-- Team tools -->
+		<div class="btn-group pull-right visible-xs">
+			<button type="button" class="fixXEditableTextArea btn-team-edit btn btn-info btn-xs">
+				<span class="glyphicon glyphicon-pencil"></span>
+			</button>
+			<button type="button" class="btn-team-destroy btn btn-danger btn-xs">
+				<span class="glyphicon glyphicon-trash"></span>
+			</button>
+		</div>
+		<div class="btn-group pull-right hidden-xs">
+			<button type="button" class="fixXEditableTextArea btn-team-edit btn btn-info btn-xs">
+				<span class="glyphicon glyphicon-pencil"></span> Edit JSON
+			</button>
+			<button type="button" class="btn-team-destroy btn btn-danger btn-xs">
+				<span class="glyphicon glyphicon-trash"></span> Delete
+			</button>
+		</div>
+	</td>
+</script>
+
+
+<script type="text/javascript">
+
+// Wait until page load is complet
+$(document).ready(function(){
+
+/*
+	Mixins methods (helper/utility)
+*/
+App.Mixins.editJSON = function(model, title, cb){
+
+	// Find and reset modal
+	var $modal = $('#modal-edit');
+	var $field = $modal.find('.model-json');
+	$modal.find('.form-group').removeClass('has-error');
+	$modal.find('.alert-warning').hide();
+
+	// Format model as a json string and update modal
+	var modelAsJson = JSON.stringify(model.toJSON(), null, 4);
+	$modal.find('.model-name').text(title || '');
+	$modal.find('.model-json').val(modelAsJson);
+
+	// Show and wait for confirmation
+	$modal.modal('show');
+	$modal.find('.btn-confirm-edit').unbind('click').click(saveAction);
+
+	function saveAction(){
+
+		// Parse json
+		var rawUpdateData = $field.val();
+		try {
+			var newModel = JSON.parse(rawUpdateData);
+		} catch (e) {
+			// There was an error, show to the user
+			$modal.find('.form-group').addClass('has-error');
+			$modal.find('.alert-warning').slideDown('fast');
+			return;
+		}
+
+		// Hide Modal and Delegate action
+		$modal.modal('hide');
+		if(cb)cb(newModel);
+	}
+}
+
+/*
+	Define Views
+*/
+App.Views.Team = Backbone.View.extend({
+	// It's a table row
+	tagName: 'tr',
+	template: _.template($('#template-team-view').html()),
+
+	// Events
+	events: {
+		'click .btn-team-destroy': 'confirmAction',
+		'click .btn-team-edit': 'editJSON'
+	},
+
+	initialize: function(){
+		this.listenTo(this.model, 'change', this.render);
+		this.listenTo(this.model, 'destroy', this.destroy);
+	},
+
+	render: function(){
+		// Render with data
+		var dict = this.model.toJSON();
+		var html = this.template(dict);
+		this.$el.html(html);
+
+		// Configure in-place editors
+		this.configureName()
+			.configureCountry();
+
+		return this;
+	},
+
+	configureName: function(){
+		App.Mixins.editInPlace(this.model, this.$('.team-name'));
+		return this;
+	},
+
+	configureCountry: function(){
+		var field = this.$('.team-country');
+
+		function format(state) {
+			if(!state.id)
+				return state.text;
+			return '<span class="flag-icon flag-icon-' + state.id.toLowerCase() +'"></span> ' + state.text;
+		}
+
+		App.Mixins.editInPlace(this.model, field, {
+			type: 'select2',
+
+			escape: false,
+			value: this.model.get('country'),
+			source: Util.countries,
+
+			select2: {
+				width: 150,
+				placeholder: 'Select Country',
+				allowClear: true,
+
+			    formatSelection: format,
+			    escapeMarkup: function(m) { return m; },
+			}
+		});
+		return this;
+	},
+
+	editJSON: function(){
+		var view = this;
+		App.Mixins.editJSON(this.model, this.model.get('name'), function(newData){
+			view.model.save(newData);
+		});
+	},
+
+	destroy: function(){
+		this.$el.remove();
+	},
+
+	// This launches a modal to confirm the action taken
+	confirmAction: function(){
+		var view = this;
+		var message = 'Are you sure that you want to DELETE team "'+this.model.get('name')+'"?';
+		App.Mixins.confirmAction(message, true, function(){
+			view.model.destroy({wait: true});
+		});
+	},
+});
+
+App.Views.Teams = Backbone.View.extend({
+
+	// Private storage of team views
+	_views: {},
+
+	// jQuery links to place
+	$teamTable: null,
+	$btnRefresh: null,
+
+	// Events
+	events: {
+		'click .btn-team-refresh': 'refresh',
+		'click .btn-team-create': 'createTeam',
+		'click .btn-teams-edit': 'editJSON'
+	},
+
+	initialize: function(){
+		this.listenTo(this.collection, 'add', this.add);
+		this.listenTo(this.collection, 'remove', this.remove);
+		this.listenTo(this.collection, 'reset', this.render);
+
+		this.listenTo(this.collection, 'request', this.startSync);
+		this.listenTo(this.collection, 'sync', this.endSync);
+		this.listenTo(this.collection, 'change', this.endSync);
+		this.listenTo(this.collection, 'add', this.endSync);
+		this.listenTo(this.collection, 'remove', this.endSync);
+		this.listenTo(this.collection, 'reset', this.endSync);
+	},
+
+	render: function(){
+		var view = this;
+
+		// Find team table in view
+		if(!this.$teamTable)
+			this.$teamTable = this.$('.team-table tbody');
+
+		// Find jQuery objects
+		this.$btnRefresh = this.$('.btn-team-refresh');
+
+		// Go through all models inside the collection, adding to the view
+		_(this.collection.models).each(function(model){
+			// Create and add view
+			view.add(model);
+		});
+
+		// Update count
+		this.renderCount();
+	},
+
+	refresh: function(){
+		var view = this;
+		this.startSync();
+		this.collection.fetch();//{success: finish, error: finish});
+		function finish(){view.endSync()};
+		return this;
+	},
+
+	createTeam: function(){
+		this.collection.create({}, {wait: true});
+	},
+
+	editJSON: function(){
+		var view = this;
+		App.Mixins.editJSON(this.collection, 'Collection', function(newCollection){
+
+			// Mix with collection and then save each one
+			view.collection.add(newCollection, {merge: true});
+
+			view.collection.sync('create', view.collection, {
+				url: '/teams/create',
+			});
+			// view.collection.each(function(model){
+				// model.save();
+			// })
+		});
+	},
+
+	startSync: function(){
+		// Disable refresh button and animate icon
+		this.$btnRefresh.attr('disabled', true);
+		this.$btnRefresh.find('.glyphicon').addClass('icon-rotate');
+	},
+
+	endSync: function(){
+		// Enable button and stop rotating
+		this.$btnRefresh.removeAttr('disabled');
+		this.$btnRefresh.find('.glyphicon').removeClass('icon-rotate');
+	},
+
+	add: function(model){
+		// If model exists, skip
+		if(this._views[model.id])
+			return this;
+
+		var teamView = new App.Views.Team({
+			model: model
+		});
+
+		// Register in views and append to views
+		this._views[model.id] = teamView;
+		this.appendView(teamView);
+
+		// Update count
+		this.renderCount();
+
+		return this;
+	},
+
+	remove: function(model){
+		// If model doesn't exist, skip it
+		if(!this._views[model.id])
+			return this;
+
+		// Sub-view should remove() itself
+		model.trigger('destroy');
+		delete this._views[model.id];
+
+		// Update count
+		this.renderCount();
+
+		return this;
+	},
+
+	appendView: function(view){
+		this.$teamTable.append(view.render().$el);
+		return this;
+	},
+
+	renderCount: function(){
+		var count = '';
+		if(this.collection.length > 0)
+			count = '('+this.collection.length+')';
+
+		this.$el.find('.team-count').text(count);
+
+		return this;
+	}
+
+});
+
+/*
+	Create collection
+*/
+App.teams = new App.Collections.Teams();
+
+/*
+	Create Views
+*/
+App.teamsView = new App.Views.Teams({
+	collection: App.teams,
+	el: '#team-view'
+});
+
+/*
+	Load models
+*/
+App.teams.reset(<%- JSON.stringify(teams) %>);
+
+});
+
+</script>

@@ -1,10 +1,10 @@
 {
-  "name": "nodeplate",
+  "name": "tournamenter",
   "version": "1.0.0",
   "authors": [
     "Ivan Seidel <ivanseidel@gmail.com>"
   ],
-  "description": "Node boilerplate for servers",
+  "description": "A Generic Tournament manager",
   "license": "MIT",
   "ignore": [
     "**/.*",
@@ -14,14 +14,11 @@
     "tests"
   ],
   "dependencies": {
-    "bootstrap": "~3.3.5"
   },
   "install": {
     "path": "public/components",
     "sources": {}
   },
   "resolutions": {
-    "angular": "1.4.3",
-    "angular-material": "0.11.0"
   }
 }

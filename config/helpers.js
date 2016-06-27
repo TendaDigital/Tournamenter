@@ -1,4 +1,6 @@
-var TAG = 'config.helpers';
+'use strict';
+var TAG = _TAG('config.helpers');
+
 var fs = require('fs');
 var path = require('path');
 
@@ -7,21 +9,14 @@ var helpersDirectory = __dirname + '/..' + '/helpers/';
 
 app.helpers = {};
 
-fs.readdirSync(helpersDirectory).forEach(function (file) {
-	if (file.indexOf('.js') < 0)
-		return;
+// Load only the loader by default
+var loader = require('../helpers/loader');
 
-	var model = require(helpersDirectory + file);
-	var name = path.basename(file, '.js');
+// Load all helpers (including the loader itself lol)
+loader.load(helpersDirectory, app.helpers);
 
-	app.helpers[name] = model;
-});
+console.log(TAG, 'Installed Helpers:', chalk.yellow(_.keys(app.helpers).join(',')));
 
-console.log(TAG, 'Installed Helpers:', _.keys(app.helpers).join(','));
-
-
-function config(app, next){
+module.exports = function config(app, next){
 	next();
 }
-
-module.exports = config;

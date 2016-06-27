@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="<%= _projectName %>">
+    <meta name="author" content="Ivan Seidel">
+    <!-- <link rel="shortcut icon" href="../../docs-assets/ico/favicon.png"> -->
+
+    <title><%= title ? title : _projectName %></title>
+
+    <!--STYLES-->
+    <link rel="stylesheet" href="/min/production.css">
+    <!--STYLES END-->
+
+    <!--TEMPLATES-->
+    <script type="text/javascript" src="/jst.js"></script>
+    <!--TEMPLATES END-->
+
+    <!--SCRIPTS-->
+    <script src="/min/production.js"></script>
+    <!--SCRIPTS END-->
+
+    <!-- Just for debugging purposes. Don't actually copy this line! -->
+    <!--[if lt IE 9]><script src="../../docs-assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <%
+
+    function realPath(path){
+      if(!path)
+        return '#';
+
+      if(path.path)
+        path = path.path;
+
+      return _rootUrl + path;
+    };
+
+    function isCurrentPage(testCase, pseudoMatch){
+      if(pseudoMatch)
+        return (realPath(path).indexOf(testCase) >= 0);
+
+      return (path == realPath(testCase));
+    };
+
+    /*
+     * Returns 'active' if the given path matches the current page
+     */
+    function getActiveClass(path, pseudoMatch){
+      return (isCurrentPage(path, pseudoMatch) ? 'active' : '');
+    }
+
+    /*
+     * Render a badge
+     */
+    function renderBadge(badge, addClasses){
+      if(!badge)
+        return '';
+
+      // Is a string
+      return '<span class="badge '+addClasses+'">'+badge+'</span>';
+    }
+  %>
+
+  <body>
+
+    <div id="wrap">
+      <!-- Fixed navbar -->
+      <div class="navbar navbar-default navbar-fixed-top" role="navigation" style="opacity: 0.9;">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="<%= (_rootUrl ? _rootUrl : '/') %>"><%= _projectName%></a>
+          </div>
+          <div class="navbar-collapse collapse">
+
+            <!-- Navigation bar (topMenu) -->
+            <ul class="nav navbar-nav">
+              
+              <% for(var i in _menus){ %>
+                <% var menu = _menus[i]; %>
+
+                <% if(menu.childs && menu.childs.length > 0){ %>
+                  <!-- Dropdown -->
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= menu.name %> <b class="caret"></b></a>
+
+                    <ul class="dropdown-menu">
+                      <% menus = menu.childs %>
+                      <%  
+                        for(var j = 0; j < menus.length; ){
+                          var item = menus[j];
+                          if(item.childs && item.childs.length > 0){
+                            %>
+                            <% if(j > 0){ %>
+                              <li class="divider"></li>
+                            <% } %>
+                            <% if(item.name){ %>
+                              <li class="dropdown-header"><%= item.name %></li>
+                            <% }%>
+                            <%
+                            for(var g in item.childs){
+                            %>
+                              <li><%- linkItem(item.childs[g]) %></li>
+                            <%
+                            }
+                          }else{
+                          %>
+                      
+                          <li><a href="<%= realPath(item) %>" class="<%- getActiveClass(item) %>">
+                            <% if(item.icon){ %>
+                              <span class="glyphicon glyphicon-<%= item.icon %>"></span>
+                            <% } %>
+                            <%= item.name %> 
+                            <%- renderBadge(item.badge) %>
+                          </a></li>
+                      
+                          <%
+                          }
+                      %>
+                      <%  j++;
+                        }
+                      %>
+                    </ul>
+                  </li>
+                <% }else{ %>
+                  <!-- Simple item -->
+                  <li class="<%- getActiveClass(menu.path, true) %>">
+                    <a href="<%= realPath(menu) %>">
+                      <% if(menu.icon){ %>
+                        <span class="glyphicon glyphicon-<%= menu.icon %>"></span>
+                      <% } %>
+                      <%= menu.name %> 
+                      <%- renderBadge(menu.badge) %>
+                    </a>
+                  </li>
+                <% } %>
+              <% } %>
+
+            </ul>
+
+            <!-- Private menu -->
+            <ul class="nav navbar-nav navbar-right">
+              <% for(var i in sideMenu){ %>
+                <% var menu = sideMenu[i]; %>
+
+                <% if(menu.childs && menu.childs.length > 0){ %>
+                  <!-- Dropdown -->
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><%= menu.name %> <b class="caret"></b></a>
+
+                    <ul class="dropdown-menu">
+                      <% menus = menu.childs %>
+                      <%  
+                        for(var j = 0; j < menus.length; ){
+                          var item = menus[j];
+                          if(item.childs && item.childs.length > 0){
+                            %>
+                            <% if(j > 0){ %>
+                              <li class="divider"></li>
+                            <% } %>
+                            <% if(item.name){ %>
+                              <li class="dropdown-header"><%= item.name %></li>
+                            <% }%>
+                            <%
+                            for(var g in item.childs){
+                            %>
+                              <li><%- linkItem(item.childs[g]) %></li>
+                            <%
+                            }
+                          }else{
+                          %>
+                      
+                          <li><a href="<%= realPath(item) %>" class="<%- getActiveClass(item) %>">">
+                            <% if(item.icon){ %>
+                              <span class="glyphicon glyphicon-<%= item.icon %>"></span>
+                            <% } %>
+                            <%= item.name %> 
+                            <%- renderBadge(item.badge) %>
+                          </a></li>
+                      
+                          <%
+                          }
+                      %>
+                      <%  j++;
+                        }
+                      %>
+                    </ul>
+                  </li>
+                <% }else{ %>
+                  <!-- Simple item -->
+                  <li class="<%- getActiveClass(menu.path, true) %>">
+                    <a href="<%= realPath(menu) %>">
+                      <% if(menu.icon){ %>
+                        <span class="glyphicon glyphicon-<%= menu.icon %>"></span>
+                      <% } %>
+                      <%= menu.name %> 
+                      <%- renderBadge(menu.badge) %>
+                    </a>
+                  </li>
+                <% } %>
+              <% } %>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+
+      <div class="container">
+
+        <% if(!sideMenu) {%>
+
+          <div class="row">
+            <div class="col-xs-12">
+              <%- body %>
+            </div>
+          </div>
+
+        <% }else{ %>
+
+          <div class="row">
+            <div class="col-xm-12 col-sm-4 col-md-3" role="navigation">
+
+              <!-- <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar"> -->
+              <ul class="list-group">
+                <% for(var item in sideMenu){ %>
+                  <% var menu = sideMenu[item]; %>
+
+                  <a href="<%= realPath(sideMenu[item]) %>" class="list-group-item <%- getActiveClass(sideMenu[item].path) %>">
+                    <% if(menu.icon){ %>
+                      <span class="glyphicon glyphicon-<%= menu.icon %>"></span>
+                    <% } %>
+                    <%- renderBadge(menu.badge, 'pull-right') %>
+                    <%= menu.name %>
+                  </a>
+                  <% %>
+
+                <% } %>
+              </ul>
+
+            </div>
+            <div class="col-xm-12 col-sm-8 col-md-9">
+              <%- body %>
+            </div>
+          </div>
+
+        <% } %>
+
+      </div> <!-- /container -->
+
+    </div> <!-- /wrap -->
+
+    <div id="footer">
+      <div class="container">
+        <p class="text-muted credit">© 2014 | <a target="_blank" href="https://github.com/ivanseidel">Ivan Seidel</a>
+          <small class="pull-right">v<%= _version %></small>
+        </p>
+      </div>
+    </div>
+
+    <!-- DESTROY MODAL -->
+    <div id="modal-destroy" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Confirm Deletion</h4>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <!-- Don't warn egain -->
+            <div class="dont-remember pull-left">
+              <input class="btn-dismiss" id="modal-destroy-btn-dismiss" type="checkbox">
+              <label for="modal-destroy-btn-dismiss">Don't remember me</label>
+            </div>
+
+            <!-- Close and Confirm buttons -->
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <button type="button" class="btn-confirm-destroy btn btn-danger">
+              <span class="glyphicon glyphicon-trash"></span> Confirm
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ DESTROY MODAL -->
+
+  </body>
+</html>

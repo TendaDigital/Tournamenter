@@ -1,23 +1,15 @@
-var TAG = 'config.controllers';
-var fs = require('fs');
-var path = require('path');
+'use strict';
+var TAG = _TAG('config.controllers');
 
 function config(app, next){
-	app.controllers = {};
-
 	var controllersDirectory = __dirname + '/..' + '/controllers/';
 
-	fs.readdirSync(controllersDirectory).forEach(function (file) {
-		if (file.indexOf('.js') < 0)
-			return;
+  // Load All controllers
+  app.controllers = {};
+	app.helpers.loader.load(controllersDirectory, app.controllers);
 
-		var controller = require(controllersDirectory + file);
-		var name = path.basename(file, '.js');
-
-		app.controllers[name] = controller;
-	});
-
-	app.debug(TAG, 'Installed Controllers:', _.keys(app.controllers).join(','));
+  // Debug loaded controllers
+	console.log(TAG, 'Controllers:', chalk.yellow(_.keys(app.controllers).join(',')));
 
 	next();
 }

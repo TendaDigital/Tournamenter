@@ -1,0 +1,458 @@
+<link rel="stylesheet" href="/css/page-transitions.css">
+<link rel="stylesheet" href="/css/view-default.css">
+<script src="/js/page-transitions.js"></script>
+<script src="/js/page-indicator.js"></script>
+
+<style type="text/css">
+
+.side-menu {
+	position: absolute;
+
+	top: 0;
+	left: 0;
+	left: -300px;
+	width: 300px;
+	height: 100%;
+	z-index: 100;
+	
+	background: #48a770;
+	-webkit-transition: left 0.5s 0.6s;
+			transition: left 0.5s 0.6s;
+}
+
+#wrapper{
+	-webkit-transition: opacity 0.5s;
+			transition: opacity 0.5s;
+}
+
+.menu-open .side-menu,
+.side-menu:hover {
+	left: 0px;
+}
+
+.menu-open .side-menu,
+.side-menu:hover ~ #wrapper{
+	opacity: 0.3;
+}
+
+.side-menu .handle {
+	position: absolute;
+	top: 0px;
+	right: -50px;
+	/*top: 50%;*/
+	width: 50px;
+	height: 100%;
+	opacity: 0;
+	-webkit-transition: opacity 0.5s;
+			transition: opacity 0.5s;
+	/*background-color: rgba(0,0,0,0.5);*/
+	background: -moz-linear-gradient(left, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0) 100%);
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(0,0,0,0.65)),
+		color-stop(100%,rgba(0,0,0,0)));
+	background: -webkit-linear-gradient(left, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	background: -o-linear-gradient(left, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	background: -ms-linear-gradient(left, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	background: linear-gradient(to right, rgba(0,0,0,0.65) 0%,rgba(0,0,0,0) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a6000000',
+		endColorstr='#00000000',GradientType=1 );
+}
+.side-menu:hover .handle {
+	opacity: 0.5;
+}
+.side-menu .handle::before{
+	top: 50%;
+	position: relative;
+	font-size: 30px;
+	color: #FFF;
+}
+
+
+/* content style */
+/*.side-menu ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.side-menu h2 {
+	margin: 0;
+	padding: 1em;
+	color: rgba(0,0,0,0.4);
+	text-shadow: 0 0 1px rgba(0,0,0,0.1);
+	font-weight: 300;
+	font-size: 2em;
+}
+
+.side-menu ul li a {
+	display: block;
+	padding: 1em 1em 1em 1.2em;
+	outline: none;
+	box-shadow: inset 0 -1px rgba(0,0,0,0.2);
+	color: #f3efe0;
+	text-transform: uppercase;
+	text-shadow: 0 0 1px rgba(255,255,255,0.1);
+	letter-spacing: 1px;
+	font-weight: 400;
+	-webkit-transition: background 0.3s, box-shadow 0.3s;
+	transition: background 0.3s, box-shadow 0.3s;
+}
+
+.side-menu ul li:first-child a {
+	box-shadow: inset 0 -1px rgba(0,0,0,0.2), inset 0 1px rgba(0,0,0,0.2);
+}
+
+.side-menu ul li a:hover {
+	background: rgba(0,0,0,0.2);
+	box-shadow: inset 0 -1px rgba(0,0,0,0);
+	color: #fff;
+}*/
+
+
+</style>
+
+<div id="container" class="">
+
+	<nav class="side-menu">
+		<h2 class="text-center"><span class="glyphicon glyphicon-cog"></span> Settings</h2>
+		<ul class="">
+			<li><a class="icon icon-data" href="#">Here</a></li>
+			<li><a class="icon icon-location" href="#">Comes</a></li>
+			<li><a class="icon icon-study" href="#">the</a></li>
+			<li><a class="icon icon-photo" href="#">SUPER</a></li>
+			<li><a class="icon icon-wallet" href="#">COOL</a></li>
+			<li><a class="icon icon-wallet" href="#">SIDE</a></li>
+			<li><a class="icon icon-wallet" href="#">MENU</a></li>
+		</ul>
+		<span class="handle glyphicon glyphicon-chevron-right"></span>
+	</nav>
+
+	<div id="wrapper">
+
+		<div id="pages" class="pt-perspective"></div>
+			
+		<div id="page-navigation" class="dotstyle dotstyle-scaleup">
+			<ul></ul>
+		</div>
+
+		<footer>
+			<span class="logo">
+				<img src="/img/logo_robocup.png"/>
+			</span>
+			
+			<h1 id="view-title" class="title"></h1>
+			<h2 id="view-subtitle" class="subtitle">Test</h2>
+
+			<p class="footnote">
+				Developed by <a href="mailto:ivanseidel@gmail.com">Ivan Seidel</a> and <a href="http://github.com/RoboCupDev">RoboCupDev</a>.
+			</p>
+		</footer>
+
+	</div>
+
+	<!-- LOST CONNECTION indicator -->
+	<div class="lost-connection">
+		<div>
+			<span class="glyphicon glyphicon-warning-sign"></span><br/>
+			Lost connection...
+		</div>
+	</div>
+
+</div>
+
+
+
+<script type="text/javascript">
+
+var GlobalViewController = Backbone.View.extend({
+
+	pageIndicator: null,
+
+	initialize: function () {
+		console.log('Init GlobalViewController');
+		var view = this;
+		view.pages = this.model.get('Pages');
+
+		// Instantiate the transition object
+		// this.pageTransitions = new App.Views.PageTransitions();
+
+		// Instantiate the page indicator and setup it
+		// this.pageIndicator = new PageIndicator({ el: '#page-navigation ul' });
+		this.pageIndicator = $('#page-navigation ul');
+		// Listen to selection on pageIndicator to change pages
+		// this.listenTo(this.pageIndicator, 'selectpage', this.changeToPageAt, this);
+		this.pageIndicator.bind('indicator.selectpage', function(e, i){view.changeToPageAt(i, 10000)});
+		// Listen for changes on pages to update page indicator
+		this.listenTo(view.pages, 'reset add remove', this.updatePageIndicator);
+
+		// Listen to add/remove/reset on pages
+		this.listenTo(view.pages, 'reset add', this.render);
+		this.listenTo(view.pages, 'remove', this.destroyPage);
+
+		// var testViews = $('.pt-page');
+		// var i = -1;
+		// setInterval(next, 4000);
+		// next();
+		// function next(){
+		// 	if(i++ >= testViews.length - 1)
+		// 		i = 0;
+
+		// 	view.pageIndicator.setPage(i);
+
+		// 	var $view = testViews.eq(i);
+
+		// 	var animationsKeys = _.keys(view.pageTransitions.animations);
+		// 	// var key = 'rotateCubeTopOut';
+		// 	var key = _.sample(animationsKeys);
+		// 	var animation = view.pageTransitions.animations[key];
+		// 	view.pageTransitions.changePage($view, {
+		// 		animation: animation
+		// 	});
+		// }
+
+		this.cycle();
+	},
+
+	/*
+		Removes a view
+	*/
+	destroyPage: function(page){
+		// Find corresponding view
+		console.log('destroy page: '+page.id);
+		var pageView = this.pageViews[page.id];
+		if(!pageView) return;
+		// If it's the current page, then cycle it egain
+		if(pageView == this.currentView) this.cycle();
+		delete this.pageViews[page.id];
+
+		page.trigger('destroy');
+	},
+
+	/*
+		Cycler will update and make sure things are rotating.
+	*/
+	cyclerTimer: null,
+	minimumStillTime: 1000,
+	maximumStillTime: 30000,
+	schedule: function(extraDelay){
+		var view = this;
+		if(this.cyclerTimer) cyclerTimer = clearTimeout(this.cyclerTimer);
+
+		var estimatedTime = this.currentView ? this.currentView.estimateTime() : 0;
+		var filteredTime = estimatedTime*1;
+		filteredTime = Math.max(this.minimumStillTime, filteredTime); // Limit minimum
+		filteredTime = Math.min(this.maximumStillTime, filteredTime); // Limit maximum
+		filteredTime += (extraDelay ? extraDelay*1 : 0);
+
+		this.cyclerTimer = setTimeout(function(){
+			view.cycle();
+		}, filteredTime);
+	},
+
+	/*
+		Cycle will do the next action on the queue
+	*/
+	cycle: function(){
+		var views = this.getPageViews();
+		if(!views) return console.info('No views to show');
+
+		var nextIndex = this.getCurrentPageIndex() + 1;
+		if(nextIndex >= views.length) nextIndex = 0;
+
+		var nextView = views[nextIndex];
+		this.setCurrentView(nextView);
+
+		this.schedule();
+	},
+
+	pageViews: {},
+	render: function(){
+
+		// Instantiate each page, if not existent
+		var pageViews = this.pageViews;
+		for(var k = 0; k < this.pages.length; k++){
+			var page = this.pages.at(k);
+
+			// Skip already cached views
+			if(pageViews[page.id]) continue;
+
+			var pageView = new Modules.PageViews[page.get('module')].view({
+				model: page,
+				viewController: this,
+				className: 'pt-page',
+			});
+
+			pageView.render();
+			this.$el.append(pageView.$el);
+
+			// Save on cache
+			pageViews[page.id] = pageView;
+		}
+	},
+
+	/*
+		This method will get the element from the view, and animete to it,
+		triggering all hide/show events on last and current views.
+	*/
+	// Delay to updateIndicator. Set to 0 to be on start. negative to be on end
+	updatePageIndicatorDelay: 200,
+	delayBeforeAnimate: 500,
+	currentView: null,
+	setCurrentView: function(nextView){
+		// Skip if currentView is the same as nextView
+		if(this.currentView == nextView)
+			if(nextView)
+				nextView.trigger('show:skip');
+
+		var currentView = this.currentView;
+		var view = this;
+
+		if(currentView) currentView.trigger('hide:before');
+		if(nextView) 	nextView.trigger('show:before');
+		// Set current view
+		view.currentView = nextView;
+		// Call it latter, so that the view has time to prepare itself to be shown
+		setTimeout(transitionate, this.delayBeforeAnimate || 0);
+
+		function transitionate(){
+
+			if(!nextView) return afterChangePage();
+			var to 	 = nextView ? nextView.$el : null;
+			var from = currentView ? currentView.$el : null;
+
+			view.$el.transitionTo(to, {
+				onEnd: afterChangePage,
+				outClass: 'pt-page-moveToRight pt-page-ontop',
+				inClass: 'pt-page-scaleUp',
+			});
+
+			if(view.updatePageIndicatorDelay >= 0){
+				setTimeout(function(){
+					view.updatePageIndicator()
+				}, view.updatePageIndicatorDelay*1);
+			}
+		}
+
+
+		function afterChangePage(){
+			if(currentView) currentView.trigger('hide:after');
+			if(nextView) 	   nextView.trigger('show:after');
+			if(currentView) currentView.trigger('hide');
+			if(nextView) 	   nextView.trigger('show');
+			if(view.updatePageIndicatorDelay < 0) view.updatePageIndicator();
+		}
+	},
+
+	/*
+		Returns views as array.
+
+		This method will return only Views that are visible
+	*/
+	getPageViews: function(){
+		var enabledViews = _.filter(this.pageViews, function(view){
+			return view.model.get('disabled') == 'false';
+		});
+
+		return _.toArray(enabledViews);
+	},
+
+	getCurrentPageIndex: function(){
+		var views = this.getPageViews();
+		for(var k = 0; k < views.length; k++)
+			if(this.currentView == views[k])
+				return k*1;
+		return -1;
+	},
+
+	getCurrentPageCount: function(){
+		return this.getPageViews().length;
+	},
+
+	/*
+		Reverse
+	*/
+	changeToPageAt: function(index, postDelay){
+		// Change page to the cached view at specified index
+		var view = this.getPageViews()[index];
+		this.setCurrentView(view);
+		this.schedule(postDelay);
+	},
+
+	updatePageIndicator: function(){
+		// console.info('Update indicator: '+this.getCurrentPageIndex());
+		this.pageIndicator.indicate(
+			this.getCurrentPageCount(),
+			this.getCurrentPageIndex());
+		return this;
+	},
+});
+
+
+/*
+	Responsible for rendering/updating template-specific stuff
+*/
+var TemplateViewController = Backbone.View.extend({
+	initialize: function(){
+		this.listenTo(this.model, 'change:name', this.updateTitle);
+		this.listenTo(this.model, 'change:title', this.updateSubtitle);
+	},
+
+	render: function(){
+		this.updateTitle();
+	},
+
+	updateTitle: function(){
+		$('#view-title').text(this.model.get('name'));
+		return this;
+	},
+
+	updateSubtitle: function(){
+		// Format subtitle. such as: "(TITLE HERE)"
+		var string = this.model.get('title');
+		string = string ? '(' + string + ')' : '';
+
+		$('#view-subtitle').text(string);
+		return this;
+	},
+});
+
+function setConnectionStatus(ok){
+	if(ok) $('.lost-connection').removeClass('animate');
+	else   $('.lost-connection').addClass('animate');
+}
+
+
+$(document).ready(function(){
+
+	// 	// $('#container').toggleClass('menu-open');
+	// 	// $('.flag-3d').toggleClass('flag-hide');
+	// }, 3000);
+	// pageIndicator.setCount(10);
+
+	App.view = new App.Models.View2();
+
+	App.viewController = new GlobalViewController({
+		model: App.view,
+		el: '#pages',
+	});
+
+	App.templateController = new TemplateViewController({
+		model: App.view,
+		el: 'body',
+	});
+
+	App.view.set(<%- JSON.stringify(view) %>);
+
+	// Setup connection indicator callbacks
+	App.view.on('sync',  function(){setConnectionStatus(true)});
+	App.view.on('error', function(){setConnectionStatus(false)});
+
+	window.sync = true;
+	setInterval(function(){
+		// console.info('Fetching...');
+		if(window.sync)
+			App.view.fetch();
+	}, 5000);
+})
+
+
+</script>

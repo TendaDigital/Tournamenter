@@ -1,0 +1,780 @@
+<style type="text/css">
+
+.match-state{
+	display: inline-block;
+	margin-right: 10px;
+	border-bottom: none;
+}
+
+.match-team{
+	display: inline-block;
+	width: 21%;
+	font-size: 12px;
+}
+
+.match-score{
+	display: inline-block;
+	margin-left: 5px;
+	margin-right: 5px;
+	width: 15px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.match-labels input{
+	max-width: 70px !important;
+	height: 25px;
+}
+
+.match-field{
+	font-size: 13px;
+	border: none !important;
+	min-width: 30px;
+}
+
+.match-hour{
+	font-size: 13px;
+	border: none !important;
+	min-width: 30px;
+}
+
+.match-day{
+	font-size: 13px;
+	border: none !important;
+	min-width: 30px;
+}
+
+
+.match-versus{
+	display: inline-block;
+	color: #666666;
+}
+
+
+</style>
+
+<!-- TEMPLATES -->
+
+<!-- TEMPLATE FOR GROUP VIEW -->
+<div class="hide panel panel-info" id="template-group-view">
+	<div class="panel-heading">
+		<!-- Group tools -->
+		<div class="pull-right">
+			<button class="btn-group-refresh btn btn-xs btn-info"><span class="glyphicon glyphicon-refresh"></span> Refresh</button>
+			<button class="btn-group-destroy btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete Group</button>
+		</div>
+
+		<h3 class="panel-title">
+			<span class="group-name" data-title="Group Name"></span>
+		</h3>
+	</div>
+
+	<div class="collapse collapsible">
+		<div class="panel-body">
+
+			<div class="row">
+				<div class="col-md-5 column">
+					<div class="panel panel-info">
+						<div class="panel-heading">Group Table</div>
+						<table class="spot-group-table table table-striped table-bordered table-condensed">
+						</table>
+					</div>
+				</div>
+
+				<div class="col-md-7 column">
+
+					<div class="panel panel-info">
+						<div class="panel-heading">Matches <small class="matches-count"></small>
+							<div class="pull-right">
+								<span class="label label-primary clear">DAY</span>
+								<span class="label label-info clear">HOUR</span>
+								<span class="label label-warning">FIELD</span>
+							</div>
+						</div>
+
+						<div class="spot-matches list-group">
+							
+						</div>
+
+						<!-- <div class="panel-footer"> -->
+						<button type="button" class="btn-match-create btn btn-success btn-xs btn-block">
+							<span class="glyphicon glyphicon-plus"></span> Create New Match
+						</button>
+						<!-- </div> -->
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<button type="button" class="btn-collapse btn btn-info btn-xs btn-block">Show
+	</button>
+</div>
+<!--/ TEMPLATE FOR GROUP VIEW -->
+
+<!-- TEMPLATE FOR TABLES -->
+<table id="template-table" class="hide table table-striped table-responsive table-hover table-condensed">
+</table>
+<!--/ TEMPLATE FOR TABLES -->
+
+<!-- TEMPLATE FOR MATCH -->
+<div id="template-match" class="list-group-item hide">
+	<div class="btn btn-xs match-state"  data-name="state"></div>
+	
+	<div class="match-team text-right"   data-name="teamAId"></div>
+	<div class="match-score text-center" data-name="teamAScore"></div>
+	
+	<div class="match-versus text-center">&times;</div>
+	
+	<div class="match-score text-center" data-name="teamBScore"></div>
+	<div class="match-team text-left"    data-name="teamBId"></div>
+
+	<div class="match-labels pull-right">
+		<!-- PROPERTIES -->
+		<div class="match-day label label-primary" data-name="day"></div>
+		<div class="match-hour label label-info"  data-name="hour"></div>
+		<div class="match-field label label-warning" data-name="field"></div>
+
+		<!-- ACTIONS -->
+		<button class="btn-match-delete btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
+	</div>
+</div>
+<!--/ TEMPLATE FOR MATCH -->
+
+
+<!-- CONTENT -->
+<div class="row clearfix">
+
+	<div class="col-md-12 column">
+
+		<!-- CREATE GROUP BUTON -->
+		<p class="pull-right">
+			<button type="button" id="btn-create-group" class="btn btn-success">
+				<span class="glyphicon glyphicon-plus"></span> Create New Group
+			</button>
+		</p>
+		<div class="clearfix"></div>
+	</div>
+	
+	<div class="col-md-12 column" id="groups-container">
+	</div>
+</div>
+<!--/ CONTENT -->
+
+<!-- DESTROY MODAL -->
+<div id="modal-destroy" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Confirm Deletion</h4>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<!-- Don't warn egain -->
+				<div class="pull-left">
+					<input class="btn-dismiss" id="modal-destroy-btn-dismiss" type="checkbox">
+					<label for="modal-destroy-btn-dismiss">Don't warn me next time</label>
+				</div>
+
+				<!-- Close and Confirm buttons -->
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn-confirm-destroy btn btn-danger">
+					<span class="glyphicon glyphicon-trash"></span> Confirm
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+<!--/ DESTROY MODAL -->
+
+<script type="text/javascript">
+
+// Snippet to allow accessing of objects via string
+// Object.byString = function(o, s) {
+//     s = s.replace(/\[(\w+)\]/g, '.$1'); // convert indexes to properties
+//     s = s.replace(/^\./, '');           // strip a leading dot
+//     var a = s.split('.');
+//     while (a.length) {
+//         var n = a.shift();
+//         if (n in o) {
+//             o = o[n];
+//         } else {
+//             return;
+//         }
+//     }
+//     return o;
+// }
+
+// Configure Inline edition
+$.fn.editable.defaults.mode = 'inline';
+$.fn.editable.defaults.ajaxOptions = {type: "POST"};
+
+/*
+	Model Controller
+
+	Assign null to 'id' get all models
+*/
+function ModelController(id, urlBase){
+	var self = this;
+
+	self.id = id;
+	self.urlBase = urlBase;
+
+	self.api = {
+		find: '/find/',
+		create: '/create',
+		destroy: '/destroy/',
+	};
+
+	self.data = {};
+
+	// Loads data
+	self.load = function(cb){
+		var self = this;
+		$.ajax({
+			url: self.urlBase + self.api.find + (self.id || '')
+		}).done(done);
+
+		function done(data){
+			self.data = data;
+
+			if(cb) cb(data); 
+		}
+	}
+
+	// Create a new Model with the given data
+	self.create = function(data, cb){
+		data = data || {};
+
+		$.ajax({
+			url: self.urlBase + self.api.create,
+			type: 'POST',
+			data: data,
+		}).done(done);
+
+		function done(data){
+			if(cb) cb(data);
+		}
+	}
+
+	// Destroy this group
+	self.destroy = function(cb){
+		// return cb();
+		$.ajax({
+			url: self.urlBase + self.api.destroy + self.id,
+			type: 'DELETE',
+		}).done(done);
+
+		function done(data){
+			if(cb) cb(data);
+		}
+	}
+}
+
+/*
+	GLOBAL Teams list (used for scripts and also editable library)
+*/
+var TeamList = {};
+
+// /*
+// 	Matches MVC
+
+// 	Assign null to get all Groups
+// */
+function GroupController(id){
+	var self = this;
+	// Extend base Model Controller
+	$.extend(this, new ModelController(id, '/groups'));
+	// self.data = {a: 1};
+
+	// Change api.find if 'id' is not empy, to find associated
+	if(id)
+		self.api.find = '/associated/';
+
+	// Matches REST base URL API
+	self.matchesAPI = '/matches';
+
+	// Create a new Match with the given data
+	self.createMatch = function(data, cb){
+		var self = this;
+		data = data || {};
+
+		if(!data.groupId)
+			data.groupId = self.id;
+
+		var match = new ModelController(null, self.matchesAPI);
+		match.create(data, function(match){
+			self.data.matches.push(match);
+
+			if(cb)cb(match);
+		});
+	}
+
+	// Destroy the match with the given id
+	self.destroyMatch = function(matchId, cb){
+		var match = new ModelController(matchId, self.matchesAPI);
+		match.destroy(cb);
+	}
+}
+
+/*
+	Controlls view of Group with matches and stuff.
+
+	Initialize it with a GroupController, and receive
+	a callback with the view.root when done.
+*/
+function GroupViewController(groupController, onBuild){
+	var self = this;
+
+	self.controller = groupController;
+	self.root = null;
+	self.table = null
+
+	// Whenever a delete action is made, this method
+	// should be called to confirm the action.
+	self.beforeDestroy = function(cb, message, forceShow){
+		// Find modal
+		$modal = $('#modal-destroy');
+		
+		// Check if user dismissed warning
+		if(!forceShow && $modal.find('.btn-dismiss').is(':checked'))
+			return confirmed();
+
+		// Show Modal
+		$modal.modal('show');
+
+		// Change message
+		message = message || 'Are you sure you want to DELETE this match?'
+		$modal.find('.modal-body').text(message);
+
+		// Get callback on the confirm-delete button
+		$modal.find('.btn-confirm-destroy').unbind('click').click(confirmed);
+		function confirmed(){
+			// Hide modal
+			$modal.modal('hide');
+
+			// Callback
+			cb();
+		};
+	}
+
+	// Static class. This should be called one per ViewController
+	self.makeGroupContainer = function(){
+		// Copy template
+		var $template = $('#template-group-view').clone();
+
+		// Make it visible and remove id
+		$template.removeClass('hide');
+		$template.removeAttr('id');
+
+		// Make Group Name editable
+		$template.find('.group-name').editable({
+	    	mode: 'inline',
+	    	url: '/groups/post',
+	    	name: 'name',
+	    	defaultValue: 'Group ?',
+	    	pk: self.controller.data.id
+	    });
+
+		// Make it colapsible
+		var $collapsible = $template.find('.collapsible');
+		var $collapseBtn = $template.find('.btn-collapse');
+		Util.makeCollapsible($collapseBtn, $collapsible);
+		
+		// Make it deletable by the 'Delete Group' button
+		$template.find('.btn-group-destroy').unbind('click').click(onDestroyRequested);
+
+		function onDestroyRequested(){
+			// Send destrou request to view.
+			// It should open a window confirming deletion
+			var phrase = 'Are you sure you want to delete the entire "'+self.controller.data.name+'" group?';
+			self.beforeDestroy(destroy, phrase, true);
+		};
+
+		// Callback to actually destroy model
+		function destroy(){
+			self.controller.destroy(afterDestroy);
+		}
+
+		// Just animations (model already destroyed)
+		function afterDestroy(){
+			$template.slideUp(function(){
+				$template.remove();
+			});
+		}
+
+		// Add functionality to the 'refresh' button
+		$template.find('.btn-group-refresh').click(self.refresh);
+
+		return $template;
+	}
+
+	// Tables are not usualy updated, but re-created
+	self.makeTable = function(headers, content, recycle){
+		var $table = App.Mixins.createTable(headers, content, (recycle ? recycle : $('#template-table').clone()));
+		// Make it visible and remove id
+		$table.removeClass('hide');
+		$table.removeAttr('id');
+
+		return $table;
+	}
+
+	// Creates a single match entry with configuration
+	self.makeMatch = function(match){
+		// Try recycling table if set
+		var $match = $('#template-match').clone();
+
+		// Make it visible and remove id
+		$match.removeClass('hide');
+		$match.removeAttr('id');
+
+		/*
+			Editable fields are used to allow easy edition of content.
+			Depending on the kind of field, we require different options.
+			This snipped is used to shorten code.
+		*/
+
+		// Editable options popup
+		var editableOptionsPopup = {
+			mode: 'popup',
+			url: '/matches/post',
+			pk: match.id,
+			showbuttons: false,
+		}
+		
+		// Editable options inline
+		var editableOptionsInline = {
+			mode: 'popup',
+			url: '/matches/post',
+			pk: match.id,
+			showbuttons: false,
+			emptytext: '&nbsp',
+		}
+
+		// Editable options used for Teams
+		var editableOptionsTeams = {
+			type: 'select2',
+			mode: 'popup',
+			url: '/matches/post',
+			source: TeamList,
+			pk: match.id,
+			showbuttons: false,
+			select2: {
+				width: 200,
+				placeholder: 'Select Team',
+				allowClear: true,
+			}
+		}
+
+		// Editable option for state (button that changes collor and stuff)
+		var editableOptionState = {
+			type: 'select',
+			mode: 'popup',
+			url: '/matches/post',
+			source: [
+				{value: 'scheduled', text: 'Scheduled'},
+				{value: 'playing', text: 'Playing'},
+				{value: 'ended', text: 'Ended'},
+			],
+			pk: match.id,
+			highlight: false,
+			showbuttons: false,
+			title: 'Game State',
+			display: function(value, sourceData) {
+				var classes = {
+					'scheduled': {icon: 'glyphicon-time', btn: 'btn-info'},
+					'playing': {icon: 'glyphicon-play', btn: 'btn-success'},
+					'ended': {icon: 'glyphicon-ok-circle', btn: 'btn-warning'},
+				};
+				if(!classes[value]){
+					$(this).empty();
+					return;
+				}
+				$icon = $('<span>');
+				$icon.addClass('glyphicon');
+				$(this).html($icon);
+				for(var k in classes){
+					$icon.toggleClass(classes[k].icon, k == value);
+					$(this).toggleClass(classes[k].btn, k == value);
+				}
+			}   
+	    }
+
+		// Assing a configuration for each editable that we will configure
+		var editableFields = [
+			{id: '.match-state', invalidatesTable: true,  options: editableOptionState},
+			{id: '.match-team',  invalidatesTable: true,  options: editableOptionsTeams},
+			{id: '.match-score', invalidatesTable: true,  options: editableOptionsPopup},
+			{id: '.match-day',   invalidatesTable: false, options: editableOptionsInline},
+			{id: '.match-hour',  invalidatesTable: false, options: editableOptionsInline},
+			{id: '.match-field', invalidatesTable: false, options: editableOptionsInline},
+		];
+
+		// Go through all editable fields configurating
+		for(var f in editableFields){
+			var field = editableFields[f];
+
+			// Find editables with the given class
+			$editables = $match.find(field.id);
+
+			// Make it editable
+			$editables.editable(field.options);
+
+			// If this field invalidates the table
+			if(field.invalidatesTable){
+				$editables.on('save', function(){
+					self.refresh(self.updateTable); // Just need to update the table
+					// console.log('SAVED');
+				});
+			}
+
+		    // Set values getting value from 'data-name'
+		    $editables.each(function(){
+		    	$editable = $(this);
+		    	
+		    	var key = $editable.attr('data-name');
+		    	var value = match[key];
+
+		    	$editable.editable('setValue', value);
+		    });
+		}
+
+		// Make match deletable
+		$match.find('.btn-match-delete').click(onDestroyRequested);
+		function onDestroyRequested(){
+			// Send destrou request to view.
+			// It should open a window confirming deletion
+			self.beforeDestroy(destroy);
+		};
+
+		// Callback to actually destroy model
+		function destroy(){
+			self.controller.destroyMatch(match.id, afterDestroy);
+		}
+
+		// Just animations (model already destroyed)
+		function afterDestroy(){
+			$match.slideUp('fast',function(){
+				$match.remove();
+
+				// Refresh view
+				self.refresh(self.updateTable); // Just need to update the table
+			});
+		}
+
+		return $match;
+	}
+
+	// Update Group container names and properties
+	self.updateGroupContainer = function(){
+		self.root.find('.group-name').editable('setValue', self.controller.data.name);
+	}
+
+	// Update the table with current model data
+	self.updateTable = function(){
+		// Get table and Add name property
+		var table = self.controller.data.table;
+		for(var k in table){
+			var row = table[k];
+			table[k].name = (row.team ? row.team.name : null) || '-Team not found';
+		}
+
+		// Headers of the table
+		var headers = {
+			'rank': 'Rank',
+			'name': 'Team',
+			'P': 'P',
+			'S': 'S',
+			'W': 'W',
+			'D': 'D',
+			'L': 'L',
+			'score': 'Score',
+		};
+
+		// Create Header Dinamicaly
+		/*var headers = [];
+		for(var k in table[0]){
+			// UpperCase header
+			var header = k.toUpperCase();
+
+			// Skip keys that starts with '_' (supposed to be not shown)
+			if(header.charAt(0) == '_')
+				continue;
+
+			headers[k] = header;
+		}*/
+
+		self.table = self.makeTable(headers, table, self.table);
+
+		// Replace table with new one
+		self.root.find('.spot-group-table').replaceWith(self.table);
+	}
+
+
+	// Creates matches with current model data and replaces the current ones
+	self.updateMatches = function(){
+		// Get matches array
+		var matches = self.controller.data.matches;
+
+		// Find matches spot
+		var $matchesSpot = self.root.find('.spot-matches');
+
+		// Clear Views
+		$matchesSpot.empty();
+
+		// Creates match view and append to $matchesSpot
+		for(var k in matches){
+			var match = matches[k];
+
+			var $matchView = self.makeMatch(match);
+
+			$matchesSpot.append($matchView);
+		}
+
+		// Add functionality to add new matches
+		self.root.find('.btn-match-create').unbind('click').click(function(){
+			self.controller.createMatch({},afterCreateMatch);
+		});
+
+		function afterCreateMatch(match){
+			// Create new entry for created match
+			var $matchView = self.makeMatch(match);
+			// Hides match (to animate after)
+			$matchView.hide()
+			// Adds to view
+			$matchesSpot.append($matchView);
+			// Animates
+			$matchView.slideDown();
+			// Update count
+			updateMatchesCount();
+		}
+
+		// Update Matches count text
+		updateMatchesCount();
+		function updateMatchesCount(){
+			var matchesCountText = '';
+			if(matches.length > 0)
+				matchesCountText = '('+matches.length+')';
+
+			self.root.find('.matches-count').text(matchesCountText);
+		}
+	}
+
+	// Updates all the views within it
+	self.updateViews = function(){
+		self.updateGroupContainer();
+		self.updateTable();
+		self.updateMatches();
+	}
+
+	// Refresh the entire Group views
+	self.refresh = function(){
+		// Find Refresh button and icon
+		var $refreshBtn = self.root.find('.btn-group-refresh');
+		var $glyphicon = $refreshBtn.find('.glyphicon');
+
+		// Disable refresh button and animate icon
+		$refreshBtn.attr('disabled', true);
+		$glyphicon.addClass('icon-rotate');
+
+		self.controller.load(afterLoad);
+		
+		function afterLoad(){
+			self.updateViews();
+
+			$refreshBtn.removeAttr('disabled');
+			$glyphicon.removeClass('icon-rotate');
+		}
+	}
+
+	self.init = function(){
+		// Create View
+		self.root = self.makeGroupContainer();
+
+		// Load default values
+		self.refresh();
+
+		onBuild(self.root);
+	}
+
+	self.controller.load(self.init);
+}
+
+
+
+$(document).ready(function() {
+
+	// Load Teams and saves to global object
+	$.get('/teams/teamlist', function (data) {
+		TeamList = data;
+
+		bootstrap();
+	});
+
+	function bootstrap(){
+		
+		// Load group list
+		var groups = new GroupController();
+		groups.load(function(groups){
+
+			for(k in groups){
+				initializeGroup(groups[k].id);
+			}
+		});
+
+		/*
+			This function creates a controller, binds to a
+			viewController and append to the page.
+		*/
+		function initializeGroup(id, cb){
+				// Creates controller
+				var group = new GroupController(id);
+
+				// Creates view and appends to html
+				var groupView = new GroupViewController(group, function(view){
+					// Hide view and prepend to root
+					view.hide();
+				    $('#groups-container').prepend(view);
+
+				    // Callback (if exist)
+				    if(cb) return cb(view);
+
+				    // Show view
+				    view.show();
+				});
+		}
+
+		// Add functionality to 'Create New Group' button
+		$('#btn-create-group').click(function(){
+			// Creates a new model in database
+			groups.create({}, function(newGroup){
+				// Adds to the current page
+				// console.log(newGroup);
+
+				initializeGroup(newGroup.id, animateCreation);
+			});
+		});
+
+		function animateCreation(view){
+			console.log('SLIDE DOWN!');
+			view.slideDown();
+		}
+
+
+	}
+
+    // var group = new GroupController(32);
+
+    // var groupView = new GroupViewController(group, function(){
+	    // $('#groups-container').append(groupView.root);
+    // });
+
+});
+
+
+
+</script>

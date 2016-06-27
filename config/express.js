@@ -1,6 +1,4 @@
-/**
-* Module dependencies.
-*/
+var TAG = _TAG('config.express');
 
 var methodOverride = require('method-override');
 var cookieSession = require('cookie-session');
@@ -11,14 +9,13 @@ var session = require('express-session');
 var express = require('express');
 var morgan = require('morgan');
 var csrf = require('csurf');
-// var swig = require('swig');
 
-var mongoStore = require('connect-mongo')(session);
 var winston = require('winston');
-var flash = require('connect-flash');
 var pkg = require('../package.json');
 
 function init(app, next){
+  console.log(TAG, 'Configuring Express')
+
 	var server = app.server = express();
 	var config = app.config;
 	var env = app.config.env;

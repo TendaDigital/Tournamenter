@@ -1,29 +1,47 @@
-var mongoose = require('mongoose');
+var TAG = _TAG('config.models');
 
-var TAG = 'config.models';
-var fs = require('fs');
-var path = require('path');
+var Waterline = require('waterline');
 
-// Load instantly, so that files can access models directly on root scope
-var modelsDirectory = __dirname + '/..' + '/models/';
+module.exports = function (app, next){
+  // Create new waterline ORM
+  var waterline = app.waterline = new Waterline();
 
-app.models = {};
+  // Load All controllers
+  var modelsDir = __dirname + '/..' + '/models/';
+  var models = app.helpers.loader.load(modelsDir);
 
-fs.readdirSync(modelsDirectory).forEach(function (file) {
-	if (file.indexOf('.js') < 0)
-		return;
+  // Convert to model object and load into waterline
+  var collections = {};
+  for(var k in models){
+    collections[k] = Waterline.Collection.extend(models[k]);
+  }
 
-	var modelBuilt = require(modelsDirectory + file);
-	var name = path.basename(file, '.js');
+  // Config used in this waterline instance
+  var config = {
+    adapters: {
+      'default': require(app.config.adapter)
+    },
 
-	app.models[name] = mongoose.model(name);
-});
+    connections: {
+      default: _.defaults({adapter: 'default'}, app.config.connection),
+    },
 
-console.log(TAG, 'Installed Models:', _.keys(app.models).join(','));
+    collections,
+  };
 
+  // Initialize waterline app
+  app.waterline.initialize(config, (err, ontology) => {
+    if(err)
+      return next(err);
 
-function config(app, next){
-	next();
+    // Expose collections/models to application (Use File name as ID)
+    app.models = {};
+    for(var id in models){
+      app.models[id] = ontology.collections[models[id].identity];
+    }
+
+    console.log(TAG, 'Models:', chalk.yellow(_.keys(app.models).join(',')));
+
+    next()
+  })
 }
-
-module.exports = config;

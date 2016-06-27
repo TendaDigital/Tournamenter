@@ -10,6 +10,10 @@ module.exports = {
 		secret: 'somesecretstring',
 	},
 
-	db: env.MONGODB_URL || 'mongodb://localhost:27017/test',
+	adapter: env.DB_ADAPTER || 'sails-disk',
+
+  connection: {
+    filePath: env.DB_FILEPATH || './.tmp/default/',
+  },
 
 };

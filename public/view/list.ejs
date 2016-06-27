@@ -1,0 +1,25 @@
+<div class="container" style="padding-top: 40px;">
+	<div class="col-md-8 col-md-offset-2">
+
+		<div class="panel panel-danger">
+			<div class="panel-heading">
+				Current Created Views
+			</div>
+			
+			<div class="list-group">
+				<%
+					for(var i in views){
+						view = views[i];
+				%>
+				<a href="/views/view/<%= view.id %>" class="list-group-item">
+					<h4 class="list-group-item-heading"><%= view.title %></h4>
+				</a>
+				<%
+					}
+				%>
+			</div>
+
+		</div>
+
+	</div>
+</div>

@@ -1,0 +1,491 @@
+<style type="text/css">
+
+</style>
+
+<!-- CONTENT -->
+<div class="row clearfix" id="views-view">
+
+	<div class="col-md-12 column">
+
+		<!-- CREATE TABLE -->
+		<p class="pull-right">
+			<button type="button" id="btn-create-view" class="btn btn-success">
+				<span class="glyphicon glyphicon-plus"></span> Create New View
+			</button>
+		</p>
+		<div class="clearfix"></div>
+	</div>
+	
+	<div class="col-md-12 column" id="spot-views">
+	</div>
+</div>
+<!--/ CONTENT -->
+
+<!--  VIEW VIEW TEMPLATE -->
+<script type="text/template" id="template-view-view">
+
+	<!-- <div class="panel panel-info"> -->
+		<div class="panel-heading">
+
+			<!-- Table tools -->
+			<div class="pull-right">
+				
+				<!-- Shows only in very small screens -->
+				<div class="btn-group visible-xs">
+					<!-- Refresh -->
+					<button class="btn-view-refresh btn btn-xs btn-info">
+						<span class="glyphicon glyphicon-refresh"></span>
+					</button>
+
+					<!-- Delete -->
+					<button class="btn-view-destroy btn btn-xs btn-danger" href="#">
+						<span class="glyphicon glyphicon-trash"></span>
+					</button>
+					
+					<!-- New Page -->
+					<div class="btn-group">
+						<button type="button" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
+							<span class="glyphicon glyphicon-plus"></span> <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" role="menu">
+							<li role="presentation" class="dropdown-header">Page View Types</li>
+							<li class="create-page-spot divider"></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Shows only in big screens -->
+				<div class="btn-group hidden-xs">
+					<!-- Refresh -->
+					<button class="btn-view-refresh btn btn-xs btn-info">
+						<span class="glyphicon glyphicon-refresh"></span> Refresh
+					</button>
+
+					<!-- Delete -->
+					<button class="btn-view-destroy btn btn-xs btn-danger" href="#">
+						<span class="glyphicon glyphicon-trash"></span> Delete View
+					</button>
+					
+					<!-- New Page -->
+					<div class="btn-group">
+						<button type="button" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
+							<span class="glyphicon glyphicon-plus"></span> New Page <span class="caret"></span>
+						</button>
+						<ul class="dropdown-menu pull-right" role="menu">
+							<li role="presentation" class="dropdown-header">Page View Types</li>
+							<li class="create-page-spot divider"></li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- <input type="checkbox" class="table-locked switch-mini"
+					data-on="success" data-on-label="<i class='glyphicon glyphicon-pencil'></i>"
+					data-off="danger" data-off-label="<i class='glyphicon glyphicon-ban-circle'></i>"> -->
+			</div>
+
+			<span class="panel-title">
+				<strong><span class="view-title" data-name="title" data-title="View title">{{title}}</span></strong>
+			</span>
+			<small><a target="__blank" class="text-muted" href="/views/view/{{id}}">/views/view/{{id}}</a></small>
+		</div>
+
+		<button type="button" class="btn-collapse-pages btn btn-warning btn-xs btn-block">
+			Show Pages
+		</button>
+
+		<div class="collapse spot-pages panel-body" style="padding-bottom: 0px; padding-top: 0px; margin-top: 15px;">
+
+			<!-- <div class="panel panel-info">
+				<div class="spot-bar-view panel-heading">
+					<strong>Group View</strong> 
+					<small>[1.5s, Active] - [<span class="text-success">Group A, Finals, ASD</span>]</small>
+
+					<div class="pull-right">
+						Delete
+						<button class="btn-page-destroy btn btn-xs btn-danger" href="#">
+							<span class="glyphicon glyphicon-trash"></span> Remove
+						</button>
+					</div>
+				</div>
+				<div class="panel-body">
+					aSDAWE?
+				</div>
+			</div> -->
+
+		</div>
+	<!-- </div> -->
+</script>
+<!--/ VIEW VIEW TEMPLATE -->
+
+<script type="text/template" id="template-create-page-item">
+	<li><a class="btn-create-page" data-key="{{key}}" href="#">{{name}}</a></li>
+</script>
+
+<script type="text/javascript">
+
+/*
+	=======================================
+					VIEWS
+	=======================================
+*/
+
+/*
+  ******************************************
+  A neasted view in View, to controll Pages
+  ******************************************
+*/
+App.Views.Pages = Backbone.View.extend({
+
+	className: 'list-group',
+
+	// Events
+	events: {
+	},
+
+	initialize: function(){
+		// this.listenTo(this.collection, 'add', this.add);
+		this.listenTo(this.collection, 'reset', this.render);
+	},
+
+	render: function(){
+		// console.log('RENDER | Pages');
+
+		// return;	
+		var view = this;
+
+		// Clear all
+		this.$el.css('minHeight', this.$el.height());
+		this.$el.empty();
+
+		// Go through all models inside the collection, adding to the view
+		_(this.collection.models).each(function(model){
+			// Create and add view
+			view.add(model);
+		});
+		this.$el.css('minHeight', null);
+	},
+
+	add: function(model, collection, options){
+		// console.log('ADD | Page: '+model.id);
+
+		// Render Page view acordingly to the module specified
+		var moduleName = model.get('module');
+		var module = Modules.PageViews[moduleName]
+		if(!module){
+			console.warn('No view in module! Setting default one');
+			module = Modules.PageViews['pageview'];
+		}
+
+		// Check if no ItemView is provided
+		if(!module){
+			console.error('No module provided by PageView module');
+			return this;
+		}
+
+		// Create new view
+		var view = new module.ItemView({
+			model: model
+		});
+
+		// Register in views and append to views
+		var shouldAnimate = collection ? true : false;
+		this.appendView(view, shouldAnimate);
+		return this;
+	},
+
+	appendView: function(view, shouldAnimate){
+		this.$el.prepend(view.render().$el.hide());
+		if(shouldAnimate)
+			view.$el.slideDown();
+		else
+			view.$el.show();
+
+		return this;
+	},
+
+});
+
+/*
+  ******************************************
+	  View keep track of ONE single view
+  ******************************************
+*/
+App.Views.View = Backbone.View.extend({
+	
+	tagName: 'div',
+	className: 'panel panel-warning',
+	template: _.template($('#template-view-view').html()),
+
+	// Events
+	events: {
+		'click .btn-view-refresh': 'refresh',
+		'click .btn-view-destroy': 'confirmDestroyAction',
+	},
+	
+	pageViews: null, 
+	initialize: function(){
+		// this.listenTo(this.model, 'change', this.render);
+		this.listenTo(this.model, 'destroy', this.destroy);
+
+		this.listenTo(this.model.pages, 'remove', this.onRemovePage);
+
+		this.listenTo(this.model, 'sync', this.endSync);
+	},
+
+	render: function(){
+		// console.log('RENDER | View: '+this.model.id);
+		// var shouldRenderRoot = (this.$el.html() ? false : true);
+		// if(shouldRenderRoot){
+			// Render with data
+			var dict = this.model.toJSON();
+			var html = this.template(dict);
+			this.$el.html(html);
+		// }
+
+		if(!this.pagesView){
+			// Create pagesView
+			this.pagesView = new App.Views.Pages({
+				view: this.model,
+				collection: this.model.pages,
+				el: this.$('.spot-pages'),
+			});
+		}else{
+			// Set spot
+			this.pagesView.setElement(this.$('.spot-pages'));
+		}
+		this.pagesView.render();
+
+		// Configure View
+		this.configureTitleBar()
+			.renderCreatePageButtons();
+
+		// Save jquery refresh button instance
+		this.$btnRefresh = this.$('.btn-view-refresh');
+
+		// Make pages collapsible
+		Util.makeCollapsible(this.$('.btn-collapse-pages'), this.$('.spot-pages'), {
+			showData: '<span class="caret"></span> Show Pages',
+			hideData: 'Hide Pages',
+		});
+
+		return this;
+	},
+
+	// Setup in place edition and fields callbacks in title bar
+	configureTitleBar: function(){
+		// Configure view title edition
+		var $title = this.$('.view-title');
+		App.Mixins.editInPlace(this.model, $title, {
+			value: this.model.get('title'),
+		});
+
+		return this;
+	},
+
+	// Render a list of HTML items based on available installed modules
+	renderCreatePageButtons: function(){
+		var self = this;
+		// Clean all before rendering buttons
+		$pageItemSpot = this.$('.create-page-spot');
+		$pageItemSpot.nextAll().remove();
+
+
+		// Render button items
+		var itemTemplate = _.template($('#template-create-page-item').html());
+		var count = 0;
+		for(var moduleId in Modules.PageViews){
+			// If it's disabled, continue
+			var module = Modules.PageViews[moduleId];
+			if(module.disabled)
+				continue;
+
+			var name = module.name || moduleId;
+			$pageItemSpot.after(itemTemplate({key: moduleId, name: name}));
+			count++;
+		}
+
+		if(!count)
+			$pageItemSpot.after('<li role="presentation" class="dropdown-header">No module found</li>');
+
+		$pageItemSpot.parent().find('.btn-create-page').click(function(evt){
+			evt.preventDefault();
+			var moduleId = $(this).attr('data-key');
+			// Delegate action to this View, with the module name
+			self.createPage(moduleId);
+		});
+
+		return this;
+	},
+
+	createPage: function(moduleId){
+		var module = Modules.PageViews[moduleId];
+
+		this.model.pages.add({module: module.module}, {silent: true});
+		// this.model.get('pages').push({aew: 1});
+		this.model.save(null, {wait: true});
+
+                // If the pages are not collapsed (meaning they are hidden)
+                // make sure we show them.
+                if (!this.$('.btn-collapse-pages').hasClass('collapse')) {
+                      this.$('.spot-pages').collapse('show')
+                      this.$('.btn-collapse-pages').html('Hide Pages');
+                }
+	},
+
+	onRemovePage: function(model){
+		this.model.save(null, {silent: true, wait: true});
+	},
+
+
+	destroy: function(){
+		var view = this;
+		// Animate and remove after
+		this.$el.slideUp(function(){
+			view.$el.remove();
+		});
+	},
+
+	refresh: function(){
+		var view = this;
+		this.startSync();
+		this.model.fetch({url: '/views/associated/'+this.model.id});
+		return this;
+	},
+
+	confirmDestroyAction: function(evt){
+		var view = this;
+		// Stop link
+		evt.preventDefault();
+
+		var message = 'Are you sure that you want to delete the ENTIRE view "'+view.model.get('title')+'"?';
+		App.Mixins.confirmAction(message, false, function(){
+			view.model.destroy({wait: true});
+		});
+	},
+
+	startSync: function(){
+		// Disable refresh button and animate icon
+		this.$btnRefresh.attr('disabled', true);
+		this.$btnRefresh.find('.glyphicon').addClass('icon-rotate');
+	},
+
+	endSync: function(){
+		// Enable button and stop rotating
+		this.$btnRefresh.attr('disabled', false);
+		this.$btnRefresh.find('.glyphicon').removeClass('icon-rotate');
+	},
+});
+
+
+/*
+  ******************************************
+  Views view keep track of all views created
+  ******************************************
+*/
+App.Views.Views = Backbone.View.extend({
+
+	// Private storage of dom objects
+	_views: {},
+
+	$tablesSpot: null,
+
+	// Events
+	events: {
+		'click #btn-create-view': 'createView',
+	},
+
+	initialize: function(){
+		this.listenTo(this.collection, 'add', this.add);
+		this.listenTo(this.collection, 'remove', this.remove);
+		this.listenTo(this.collection, 'reset', this.render);
+
+		this.$tablesSpot = this.$('#spot-views');
+	},
+
+	render: function(){
+		var view = this;
+
+		// Go through all models inside the collection, adding to the view
+		_(this.collection.models).each(function(model){
+			// Create and add view
+			view.add(model);
+		});
+	},
+
+	refresh: function(){
+		var view = this;
+		this.startSync();
+		this.collection.fetch();
+		return this;
+	},
+
+	createView: function(){
+		this.collection.create({}, {wait: true});
+	},
+
+	add: function(model, collection, options){
+		// If model exists, skip
+		if(this._views[model.id])
+			return this;
+
+		var view = new App.Views.View({
+			model: model
+		});
+
+		// Register in views and append to views
+		var shouldAnimate = collection ? true : false;
+		this._views[model.id] = view;
+		this.appendView(view, shouldAnimate);
+		return this;
+	},
+
+	remove: function(model){
+		// If model doesn't exist, skip it
+		if(!this._views[model.id])
+			return this;
+
+		// Sub-view should remove() itself
+		model.trigger('destroy');
+		delete this._views[model.id];
+		return this;
+	},
+
+	appendView: function(view, shouldAnimate){
+		this.$tablesSpot.prepend(view.render().$el.hide());
+		if(shouldAnimate)
+			view.$el.slideDown();
+		else
+			view.$el.show();
+
+		return this;
+	},
+
+});
+
+
+
+
+$(document).ready(function(){
+
+	/*
+		Create collection
+	*/
+	App.views = new App.Collections.Views();
+
+	/*
+		Create Views
+	*/
+	App.viewsView = new App.Views.Views({
+		collection: App.views,
+		el: '#views-view'
+	});
+
+	/*
+		Load models
+	*/
+	App.views.reset(<%- JSON.stringify(views) %>);
+
+});
+
+</script>
+

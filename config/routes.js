@@ -1,4 +1,7 @@
+var TAG = _TAG('config.routes');
+
 function config(app, next){
+  console.log(TAG, 'Configuring default route handlers')
 	var server = app.server;
 
 	/*
