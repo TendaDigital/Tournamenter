@@ -6,6 +6,9 @@ module.exports = {
 	port: port,
 	domain: domain,
 
+  appName: env.APP_NAME || require('../../package.json').name,
+  version: env.APP_NAME || require('../../package.json').version,
+
 	session: {
 		secret: 'somesecretstring',
 	},
@@ -14,6 +17,7 @@ module.exports = {
 
   connection: {
     filePath: env.DB_FILEPATH || './.tmp/default/',
+    url: env.DB_URL || null,
   },
 
 };

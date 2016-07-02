@@ -21,7 +21,8 @@ function config(app, next){
 		}
 
 		// error page
-		app.error(err.stack || err);
+    console.log('----------');
+		console.error(err.stack || err);
 		res.status(500).send({
 			code: 500,
 			url: req.originalUrl,
