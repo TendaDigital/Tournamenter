@@ -1,5 +1,9 @@
 module.exports = {
 
+  find: app.helpers.Restify(app.models.Scores, 'find'),
+  create: app.helpers.Restify(app.models.Scores, 'create'),
+  update: app.helpers.Restify(app.models.Scores, 'update'),
+  destroy: app.helpers.Restify(app.models.Scores, 'destroy'),
 
 	/*
 		Updates a single score on a given Score id
@@ -18,7 +22,7 @@ module.exports = {
 		}
 
 		// Find the score
-    	Scores.findOne(scoreId).done(function (err, score){
+    	Scores.findOne(scoreId).exec(function (err, score){
 	    	if(err) return next('Failed to get score: ' + err);
 
 	    	if(!score)

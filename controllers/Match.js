@@ -1,7 +1,12 @@
 module.exports = {
 
+  find: app.helpers.Restify(app.models.Match, 'find'),
+  create: app.helpers.Restify(app.models.Match, 'create'),
+  update: app.helpers.Restify(app.models.Match, 'update'),
+  destroy: app.helpers.Restify(app.models.Match, 'destroy'),
+
 	post: function (req, res, next) {
-		return XEditable.handle(Match)(req, res, next);
+		return app.helpers.XEditable.handle(app.models.Match)(req, res, next);
 	},
 
 	associated: function(req, res, next){
@@ -41,7 +46,7 @@ function findAssociated(id, next){
 	var model;
 	var checked = 0;
 
-	Match.findById(id).done(function afterFound(err, models) {
+	Match.findById(id).exec(function afterFound(err, models) {
 		if(!err) return afterFindMatch(models);
 		next(err, null);
 	});
@@ -54,18 +59,18 @@ function findAssociated(id, next){
 		model = models[0];
 
 		// Fetch Both Teams
-		Team.findById(model.teamAId).done(function(err, models){
+		Team.findById(model.teamAId).exec(function(err, models){
 			model.teamA = models.length ? models[0] : null;
 			checkFetch();
 		});
 
-		Team.findById(model.teamBId).done(function(err, models){
+		Team.findById(model.teamBId).exec(function(err, models){
 			model.teamB = models.length ? models[0] : null;
 			checkFetch();
 		});
 
 		// Fetch Group
-		Group.findById(model.groupId).done(function(err, models){
+		Group.findById(model.groupId).exec(function(err, models){
 			model.group = models.length ? models[0] : null;
 			checkFetch();
 		});

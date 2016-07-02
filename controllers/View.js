@@ -1,13 +1,20 @@
+var TAG = _TAG('controllers.View');
+
 var path = require('path');
 
 module.exports = {
+
+  find: app.helpers.Restify(app.models.View, 'find'),
+  create: app.helpers.Restify(app.models.View, 'create'),
+  update: app.helpers.Restify(app.models.View, 'update'),
+  destroy: app.helpers.Restify(app.models.View, 'destroy'),
 
 	manage: function(req, res, next){
 		getProcessedViews(null, afterProcessViews);
 
 		function afterProcessViews(err, views){
 
-			res.view({
+			res.render('view/manage', {
 				path: req.route.path,
 				views: views
 			});
@@ -16,7 +23,7 @@ module.exports = {
 	},
 
 	associated: function(req, res, next){
-		var id = req.param('id');
+		var id = req.params.id || null;
 
 		getProcessedViews(id, afterProcessViews);
 
@@ -25,7 +32,7 @@ module.exports = {
 
 			// 404 if not found
 			if(id && !views[0])
-				return next();//('View ID was set, but no view was found', 404);
+				return res.status(404).send('View ID was set, but no view was found');
 
 			var toRender = views;
 			if(id) toRender = views[0];
@@ -47,14 +54,14 @@ module.exports = {
 		Otherwise, it will render acordingly to the template choosen.
 	*/
 	view: function(req, res, next){
-		var id = req.param('id');
+		var id = req.params.id;
 
 		// If id is set, then we shall render a single page
 		if(id)
 			return getProcessedViews(id, renderView);
 		// Else, let's render a list
 		else
-			return View.find(renderList);
+			return app.models.View.find(renderList);
 
 
 		function renderView(err, views){
@@ -63,7 +70,7 @@ module.exports = {
 
 			// View Module to render with
 			viewModuleName = 'view-default';
-			var viewModule = Modules.get('view', viewModuleName);
+			var viewModule = app.helpers.Modules.get('view', viewModuleName);
 
 			if(!viewModule) return res.send('Could not load View Module: '+viewModuleName, 500);
 
@@ -75,7 +82,7 @@ module.exports = {
 		function renderList(err, views){
 			if(err) return next(err);
 
-			res.view('view/list', {
+			res.render('view/list', {
 				_layoutFile: '../light.ejs',
 				views: views
 			});
@@ -102,7 +109,7 @@ function getProcessedViews(id, next){
 	if(id) query = {id: id};
 	else   query = {};
 
-	View.find(query, function(err, models){
+	app.models.View.find(query, function(err, models){
 		if(err) return next(err);
 
 		processView(models, next);
@@ -173,7 +180,7 @@ function processView(view, next){
 
 	processPage(pages, function(err, newPages){
 		if(err)
-			sails.log.error('processView failed');
+			console.error(TAG, 'processView failed');
 
 		// Set view pages
 		view.pages = newPages;
@@ -217,29 +224,29 @@ function processPage(page, next){
 
 	// Check if module is set
 	if(!moduleName){
-		sails.log.info('Module not declared. skiping');
+		console.log(TAG, 'Module not declared. skiping');
 		return next(null, page);
 	}
 
 	// Get module
-	var module = Modules.get('pageview', moduleName);
+	var module = app.helpers.Modules.get('pageview', moduleName);
 
 	// Check if module is installed
 	if(!module){
-		sails.log.info('Module <'+moduleName+'> is required but not installed. skiping');
+		console.log(TAG, 'Module <'+moduleName+'> is required but not installed. skiping');
 		return next(null, page);
 	}
 
 	// Check if 'process' method doesn't exist in module
 	if(!_.isFunction(module.process)){
-		sails.log.info('Module <'+moduleName+'> does not have .process() method');
+		console.log(TAG, 'Module <'+moduleName+'> does not have .process() method');
 		return next(null, page);
 	}
 
 	// Process single page
 	module.process(page, function(err, newPage){
 		if(err)
-			sails.log.error('process() exception on module: ' + (''+moduleName).cyan);
+			console.error(TAG, 'process() exception on module: ' + (''+moduleName).cyan);
 
 		return next(err, newPage);
 	});

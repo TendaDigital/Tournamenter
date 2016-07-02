@@ -1,17 +1,22 @@
 module.exports = {
 
+  find: app.helpers.Restify(app.models.Table, 'find'),
+  create: app.helpers.Restify(app.models.Table, 'create'),
+  update: app.helpers.Restify(app.models.Table, 'update'),
+  destroy: app.helpers.Restify(app.models.Table, 'destroy'),
+
 	manage: function(req, res, next){
-		var id = req.param('id', null);
+		var id = req.param.id || null;
 		// Find tables
 		findAssociated(id, function(tables){
 
-			Team.getTeamsAsList(null, function (teamList){
+			app.models.Team.getTeamsAsList(null, function (teamList){
 				// Render view
-				return res.view({
+				return res.render('table/manage', {
 					path: req.route.path,
 					tables: tables,
 					teamList: teamList,
-					evaluateMethodsNames: Table.evaluateMethodsNames,
+					evaluateMethodsNames: app.models.Table.evaluateMethodsNames,
 
 					title: (id && tables[0] ? tables[0].name : 'Tables'),
 				});
@@ -23,7 +28,7 @@ module.exports = {
 
 	associated: function(req, res, next){
 		// Get id
-		var id = req.param('id') || null;
+		var id = req.params.id || null;
 
 		// Get collection associated
 		findAssociated(id, finishRender);
@@ -72,10 +77,10 @@ function findAssociated(id, next){
 	var where = (id ? {id: id} : null);
 
 	// Query Table model, and call afterFindTables when done.
-	var finding = Table
+	var finding = app.models.Table
 		.find()
 		.where(where)
-		.done(associateScores)
+		.exec(associateScores)
 
 
 	/*
@@ -156,7 +161,7 @@ function findAssociated(id, next){
 		}
 
 		// Find teams
-		Team.find().done(function(err, collection){
+		app.models.Team.find().exec(function(err, collection){
 			// Turns the id as the key to access it
 			// ( o(1) when accessing it )
 			for(var k in collection){
@@ -195,7 +200,7 @@ function findAssociated(id, next){
 */
 function associateTable(model, next){
 	// Perform search in Scores, where tableId equals to model.id and callback
-	_findAssociated(Scores, 'tableId', model.id, afterFind);
+	_findAssociated(app.models.Scores, 'tableId', model.id, afterFind);
 
 	function afterFind(models){
 		model.scores = models;
@@ -215,7 +220,7 @@ function _findAssociated(Model, key, id, cb){
 
 	var finding = Model.find(options);
 
-	finding.done(function afterFound(err, models) {
+	finding.exec(function afterFound(err, models) {
 		if(cb)
 			cb(models);
 	});

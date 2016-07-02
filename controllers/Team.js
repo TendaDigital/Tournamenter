@@ -1,31 +1,36 @@
 module.exports = {
 
-    /*
-    	This action is also routed for /teams under routes.js
-    */
-    manage: function(req, res, next){
+  find: app.helpers.Restify(app.models.Team, 'find'),
+  create: app.helpers.Restify(app.models.Team, 'create'),
+  update: app.helpers.Restify(app.models.Team, 'update'),
+  destroy: app.helpers.Restify(app.models.Team, 'destroy'),
 
-    	// Find teams
-    	Team.find().done(finishRendering);
+  /*
+  	This action is also routed for /teams under routes.js
+  */
+  manage: function(req, res, next){
 
-    	function finishRendering(err, collection){
-    		if(err) return next('Failet to retrieve data');
+  	// Find teams
+  	app.models.Team.find().exec(finishRendering);
 
-			return res.view({
-				path: req.route.path,
-				teams: collection
-			});
-    	}
-    },
+  	function finishRendering(err, collection){
+  		if(err) return next('Failed to retrieve data');
 
-    teamlist: function(req, res){
-    	Team.getTeamsAsList(req.param('query'), function(teamList){
-    		res.send(teamList);
-    	});
+  		return res.render('team/manage', {
+  			path: req.route.path,
+  			teams: collection
+  		});
+  	}
+  },
+
+  teamlist: function(req, res){
+  	app.models.Team.getTeamsAsList(req.param('query'), function(teamList){
+  		res.send(teamList);
+  	});
 	},
 
 	post: function (req, res, next) {
-		return XEditable.handle(Team)(req, res, next);
+		return app.helpers.XEditable.handle(app.helpers.Team)(req, res, next);
 	},
 
 
