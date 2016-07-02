@@ -1,7 +1,7 @@
 {
   "name": "tournamenter",
-  "version": "1.0.0",
-  "description": "Manages Competition Events such as RoboCup",
+  "version": "2.0.0",
+  "description": "Tournament Event Manager made easy",
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "body-parser": "^1.15.2",
@@ -19,7 +19,7 @@
     "express-session": "^1.13.0",
     "forever": "^0.15.2",
     "fs-extra": "^0.30.0",
-    "lodash": "^2.4.2",
+    "lodash": "^4.13.1",
     "method-override": "^2.3.6",
     "morgan": "^1.7.0",
     "optimist": "^0.6.1",

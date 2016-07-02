@@ -191,7 +191,6 @@
 						subtitle: 'Scores',
 					}));
 				}
-        console.log('Rendering pageview-table', template);
 
 				var finalLayout = template({
 					tables: tableViews

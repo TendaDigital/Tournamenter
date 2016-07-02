@@ -93,7 +93,7 @@ module.exports = function build(BUILD_PATH, assets, next){
 
       function compile(file){
         var tpl = `this["JST"]["${file.name}"] = `;
-        tpl += _.template(file.body, false, templateSettings).source + ';';
+        tpl += _.template(file.body, templateSettings, false).source + ';';
         return tpl;
       }
     },
