@@ -5,13 +5,15 @@ var express = require('express');
 function config(app, next){
   console.log(TAG, 'Configuring app routes');
 
-  var server = app.server;
+  const server = app.server;
+  const ctrls = app.controllers;
+  const auth = app.helpers.isAuthenticated;
 
 	/*
 	 * Base route
 	 */
 	function restify(ctrl, path = ctrl){
-		var controller = app.controllers[ctrl];
+		var Ctrl = app.controllers[ctrl];
 		path = '/' + path.toLowerCase();
 
     // * GET      /boat/:id?      -> BoatController.find
@@ -21,55 +23,56 @@ function config(app, next){
 
     // Shortcuts
     console.log(TAG, `restify ${ctrl} [as ${path}]`)
-		server.get(path+'/create', controller.create);
-		server.post(path+'/create', controller.create);
-		server.get(path+'/update/:id', controller.update);
-		server.get(path+'/destroy/:id', controller.destroy);
+		server.get(path+'/create',            auth, Ctrl.create);
+		server.post(path+'/create',           auth, Ctrl.create);
+		server.get(path+'/update/:id',        auth, Ctrl.update);
+		server.get(path+'/destroy/:id',       auth, Ctrl.destroy);
 
     // REST
-		server.get(path+'/:id?', controller.associated || controller.find);
-		server.post(path, controller.create);
-		server.put(path+'/:id', controller.update);
-		server.delete(path+'/:id', controller.destroy);
+		server.get(path+'/:id?',              auth, Ctrl.associated || Ctrl.find);
+		server.post(path,                     auth, Ctrl.create);
+  	server.put(path+'/:id',               auth, Ctrl.update);
+		server.delete(path+'/:id',            auth, Ctrl.destroy);
 	}
 
-  server.get('/', app.controllers.Team.manage);
-  server.get('/teams/teamlist', app.controllers.Team.teamlist);
+  server.get('/',                         auth, ctrls.Team.manage);
+  server.get('/teams/teamlist',                 ctrls.Team.teamlist);
 
-  server.get('/',                  app.controllers.Team.manage);
-  server.get('/login',             app.controllers.User.login);
-  server.get('/logout',            app.controllers.User.logout);
+  server.get('/',                               ctrls.Team.manage);
+  server.get('/login',                          ctrls.User.login);
+  server.post('/login',                         ctrls.User.login);
+  server.get('/logout',                         ctrls.User.logout);
 
-  server.get('/teams/manage',      app.controllers.Team.manage);
-  server.post('/teams/post',       app.controllers.Team.post);
-  server.patch('/teams/:id',       app.controllers.Team.update);
+  server.get('/teams/manage',             auth, ctrls.Team.manage);
+  server.post('/teams/post',              auth, ctrls.Team.post);
+  server.patch('/teams/:id',              auth, ctrls.Team.update);
   restify('Team', 'teams');
 
-  server.get('/groups/manage',     app.controllers.Group.manage);
-  server.get('/groups/find/:id?',  app.controllers.Group.associated);
-  server.post('/groups/post',      app.controllers.Group.post);
-  server.patch('/groups/:id',      app.controllers.Group.update);
+  server.get('/groups/manage',            auth, ctrls.Group.manage);
+  server.get('/groups/find/:id?',         auth, ctrls.Group.associated);
+  server.post('/groups/post',             auth, ctrls.Group.post);
+  server.patch('/groups/:id',             auth, ctrls.Group.update);
   restify('Group', 'groups');
 
-  server.get('/matches',           app.controllers.Match.find);
-  server.post('/matches/post',     app.controllers.Match.post);
-  server.patch('/matches/:id',     app.controllers.Match.update);
+  server.get('/matches',                  auth, ctrls.Match.find);
+  server.post('/matches/post',            auth, ctrls.Match.post);
+  server.patch('/matches/:id',            auth, ctrls.Match.update);
   restify('Match', 'matches');
 
-  server.get('/tables/manage/:id?',app.controllers.Table.manage);
-  server.get('/tables/find/:id?',  app.controllers.Table.associated);
-  server.patch('/tables/:id',      app.controllers.Table.update);
+  server.get('/tables/manage/:id?',       auth, ctrls.Table.manage);
+  server.get('/tables/find/:id?',         auth, ctrls.Table.associated);
+  server.patch('/tables/:id',             auth, ctrls.Table.update);
   restify('Table', 'tables');
 
-  server.get('/scores/:id/:number',app.controllers.Scores.updateScore);
-  server.patch('/scores/:id',      app.controllers.Scores.update);
+  server.get('/scores/:id/:number',       auth, ctrls.Scores.updateScore);
+  server.patch('/scores/:id',             auth, ctrls.Scores.update);
   restify('Scores', 'scores');
 
-  server.get('/views/manage/:id?', app.controllers.View.manage);
-  server.get('/views/view/:id?',   app.controllers.View.view);
-  server.get('/views/find/:id?',   app.controllers.View.associated);
-  server.get('/views/:id',         app.controllers.View.associated);
-  server.patch('/views/:id',       app.controllers.View.update);
+  server.get('/views/manage/:id?',        auth, ctrls.View.manage);
+  server.get('/views/view/:id?',                ctrls.View.view);
+  server.get('/views/find/:id?',                ctrls.View.associated);
+  server.get('/views/:id',                      ctrls.View.associated);
+  server.patch('/views/:id',              auth, ctrls.View.update);
   restify('View', 'views');
 
 	next();

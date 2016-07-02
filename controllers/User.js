@@ -2,7 +2,7 @@ module.exports = {
 
 	login: function(req, res, next){
 		var realPassword = process.env.PASSWORD;
-		var password = req.param('password') || req.body.password;
+		var password = req.query.password || req.body.password;
 
 		// Redirect if no password required or user is already logged in
 		if(!realPassword || realPassword == req.session.authentication)
@@ -19,7 +19,7 @@ module.exports = {
 			delete req.session.authentication;
 
 			// Render login view and show wrong password error if needed
-			res.view({
+			res.render('user/login', {
 				wrongPassword: (realPassword && password)
 			});
 		}

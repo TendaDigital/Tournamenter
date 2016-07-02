@@ -8,6 +8,7 @@ module.exports = {
 
   appName: env.APP_NAME || require('../../package.json').name,
   version: env.APP_NAME || require('../../package.json').version,
+  password: env.PASSWORD || null,
 
 	session: {
 		secret: 'somesecretstring',

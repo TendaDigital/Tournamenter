@@ -23,7 +23,8 @@ function config(app, next){
 		// error page
     console.log('----------');
 		console.error(err.stack || err);
-		res.status(500).send({
+		res.status(500).render('500', {
+      title: 'Internal error',
 			code: 500,
 			url: req.originalUrl,
 			error: err.message || err,
@@ -33,9 +34,11 @@ function config(app, next){
 
 	// Returns 404 if no middleware responded
 	server.use(function (req, res, next) {
-		res.status(404).send({
+		res.status(404).render('404', {
+      title: 'Not found',
 			code: 404,
 			url: req.originalUrl,
+			method: req.method,
 			error: 'Not found'
 		});
 	});
