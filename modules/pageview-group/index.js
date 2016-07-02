@@ -8,6 +8,26 @@
 module.exports = {
 	type: 'pageview',
 
+  getAssets: function (app){
+    return {
+      css: [
+        `${__dirname}/public/css/pageview-group.css`,
+      ],
+
+      js: [
+        `${__dirname}/public/js/pageview-group.js`,
+      ],
+
+      jst: [
+        `${__dirname}/public/templates/pageview-group.configView.html`,
+        `${__dirname}/public/templates/pageview-group.layout.html`,
+        `${__dirname}/public/templates/pageview-group.match.ended.html`,
+        `${__dirname}/public/templates/pageview-group.match.playing.html`,
+        `${__dirname}/public/templates/pageview-group.match.scheduled.html`,
+      ],
+    }
+  },
+
 	initialize: function(sails){
 
 	},

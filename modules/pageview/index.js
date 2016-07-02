@@ -4,9 +4,21 @@
 module.exports = {
 	type: 'pageview',
 
-	initialize: function(sails){
-		// Public js files to inject in templates
-		// exports.jsFilesToInclude = ['client.js'];
+  getAssets: function (app){
+    return {
+      js: [
+        `${__dirname}/public/js/pageview.js`,
+      ],
+
+      jst: [
+        `${__dirname}/public/templates/pageview.barView.html`,
+        `${__dirname}/public/templates/pageview.itemView.html`,
+        `${__dirname}/public/templates/pageview.view.html`,
+      ],
+    }
+  },
+
+	initialize: function(app){
 	},
 
 	process: function (page, next) {

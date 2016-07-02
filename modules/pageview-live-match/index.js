@@ -8,6 +8,23 @@
 module.exports = {
 	type: 'pageview',
 
+  getAssets: function (app){
+    return {
+      css: [
+        `${__dirname}/public/css/pageview-live-match.css`,
+      ],
+
+      js: [
+        `${__dirname}/public/js/pageview-live-match.js`,
+      ],
+
+      jst: [
+        `${__dirname}/public/templates/pageview-live-match.configView.html`,
+        `${__dirname}/public/templates/pageview-live-match.layout.html`,
+      ],
+    }
+  },
+
 	initialize: function(sails){
 
 	},

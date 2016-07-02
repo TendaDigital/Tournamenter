@@ -5,6 +5,20 @@
 module.exports = {
 	type: 'pageview',
 
+  getAssets: function (app){
+    return {
+      css: [],
+
+      js: [
+        `${__dirname}/public/js/pageview-image.js`,
+      ],
+
+      jst: [
+        `${__dirname}/public/templates/pageview-image.configView.html`,
+      ],
+    }
+  },
+
 	initialize: function(sails){
 
 	},

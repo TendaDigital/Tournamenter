@@ -102,7 +102,7 @@
 
 			/*
 				In order to estimate time, we must know if:
-				
+
 				+still time was set?
 					Then we will calculate the tableStillTime
 
@@ -191,6 +191,7 @@
 						subtitle: 'Scores',
 					}));
 				}
+        console.log('Rendering pageview-table', template);
 
 				var finalLayout = template({
 					tables: tableViews
@@ -235,7 +236,7 @@
 			// Update title
 			$tableView.find('.table-title').text(table.name);
 
-			// Create a table for each existent 
+			// Create a table for each existent
 			for(var d in datas){
 				// Try to recycle table
 				var $newTable = $tables[d];
@@ -335,7 +336,7 @@
 				scores: [...]
 		*/
 		makeTableHeader: function(table){
-			console.log(table);
+			// console.log(table);
 			var alignRight = 'text-right';
 			var headers = {
 				'rank': {
@@ -435,7 +436,7 @@
 				view.render();
 			});
 			if(!tables) return this;
-				
+
 			// Render view
 			this.$el.html(this.template());
 			this.$el.addClass('list-group');

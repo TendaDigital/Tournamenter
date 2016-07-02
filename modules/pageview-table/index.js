@@ -8,6 +8,25 @@
 module.exports = {
 	type: 'pageview',
 
+  getAssets: function (app){
+    return {
+      css: [
+        `${__dirname}/public/css/pageview-table.css`,
+      ],
+
+      js: [
+        `${__dirname}/public/js/pageview-table.js`,
+      ],
+
+      jst: [
+        `${__dirname}/public/templates/pageview-table.configView.html`,
+        `${__dirname}/public/templates/pageview-table.layout-1.html`,
+        `${__dirname}/public/templates/pageview-table.layout-2.html`,
+        `${__dirname}/public/templates/pageview-table.table.html`,
+      ],
+    }
+  },
+
 	initialize: function(sails){
 
 	},
@@ -15,7 +34,7 @@ module.exports = {
 	process: function (page, next) {
 		// page.data = {};
 		// next(null, page);
-		sails.controllers.table._findAssociated(page.options.tables || null, afterAssociate);
+		app.controllers.Table._findAssociated(page.options.tables || null, afterAssociate);
 
 		function afterAssociate(data){
 			page.data = data;
