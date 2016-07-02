@@ -32,7 +32,7 @@ window.Modules = Modules;
 App.Mixins.confirmAction = function(message, allowSkip, next){
 	// Find modal
 	$modal = $('#modal-destroy');
-	
+
 	// Check if user dismissed warning
 	if(allowSkip && $modal.find('.btn-dismiss').is(':checked'))
 		return confirmed();
@@ -155,7 +155,7 @@ App.Mixins.createTable = function(headers, content, root){
 
 	// Creates tbody
 	$tbody = $('<tbody>');
-	
+
 	// Go trough all contents and adds to table
 	for(var c in content){
 		var rowData = content[c];
@@ -240,7 +240,7 @@ App.Models.Score = Backbone.Model.extend({
 		Helper method used to save score to scores object.
 		you can either assign an score object, or a string/number:
 		Note that 1st round is 1, and not 0
-		Valid: 
+		Valid:
 			score.setScore(1, 10);
 			score.setScore(1, {value: 10, data: {}});
 			score.setScore(1, '10');
@@ -341,7 +341,7 @@ App.Models.Table = Backbone.Model.extend({
 // Table Collection
 App.Collections.Tables = Backbone.Collection.extend({
 	model: App.Models.Table,
-	url: '/tables/associated',
+	url: '/tables/find',
 });
 
 // Group
@@ -409,7 +409,7 @@ App.Models.View = Backbone.Model.extend({
 		// Delegate save action to this
 		this.listenTo(this.pages, 'change', function(){
 			self.trigger('change:pages');
-		});	
+		});
 
 		Backbone.Model.apply(this, arguments);
 	},
@@ -470,7 +470,7 @@ _.templateSettings = {
 
 // (function (io) {
 
-//   // as soon as this file is loaded, connect automatically, 
+//   // as soon as this file is loaded, connect automatically,
 //   var socket = io.connect();
 //   if (typeof console !== 'undefined') {
 //     log('Connecting to Sails.js...');
@@ -494,12 +494,12 @@ _.templateSettings = {
 
 //     ///////////////////////////////////////////////////////////
 //     // Here's where you'll want to add any custom logic for
-//     // when the browser establishes its socket connection to 
+//     // when the browser establishes its socket connection to
 //     // the Sails.js server.
 //     ///////////////////////////////////////////////////////////
 //     log(
-//         'Socket is now connected and globally accessible as `socket`.\n' + 
-//         'e.g. to send a GET request to Sails, try \n' + 
+//         'Socket is now connected and globally accessible as `socket`.\n' +
+//         'e.g. to send a GET request to Sails, try \n' +
 //         '`socket.get("/", function (response) ' +
 //         '{ console.log(response); })`'
 //     );
@@ -520,7 +520,7 @@ _.templateSettings = {
 //       console.log.apply(console, arguments);
 //     }
 //   }
-  
+
 
 // })(
 

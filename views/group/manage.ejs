@@ -93,7 +93,7 @@
 						</div>
 
 						<div class="spot-matches list-group">
-							
+
 						</div>
 
 						<!-- <div class="panel-footer"> -->
@@ -122,12 +122,12 @@
 <!-- TEMPLATE FOR MATCH -->
 <div id="template-match" class="list-group-item hide">
 	<div class="btn btn-xs match-state"  data-name="state"></div>
-	
+
 	<div class="match-team text-right"   data-name="teamAId"></div>
 	<div class="match-score text-center" data-name="teamAScore"></div>
-	
+
 	<div class="match-versus text-center">&times;</div>
-	
+
 	<div class="match-score text-center" data-name="teamBScore"></div>
 	<div class="match-team text-left"    data-name="teamBId"></div>
 
@@ -157,7 +157,7 @@
 		</p>
 		<div class="clearfix"></div>
 	</div>
-	
+
 	<div class="col-md-12 column" id="groups-container">
 	</div>
 </div>
@@ -242,7 +242,7 @@ function ModelController(id, urlBase){
 		function done(data){
 			self.data = data;
 
-			if(cb) cb(data); 
+			if(cb) cb(data);
 		}
 	}
 
@@ -293,7 +293,7 @@ function GroupController(id){
 
 	// Change api.find if 'id' is not empy, to find associated
 	if(id)
-		self.api.find = '/associated/';
+		self.api.find = '/find/';
 
 	// Matches REST base URL API
 	self.matchesAPI = '/matches';
@@ -339,7 +339,7 @@ function GroupViewController(groupController, onBuild){
 	self.beforeDestroy = function(cb, message, forceShow){
 		// Find modal
 		$modal = $('#modal-destroy');
-		
+
 		// Check if user dismissed warning
 		if(!forceShow && $modal.find('.btn-dismiss').is(':checked'))
 			return confirmed();
@@ -384,7 +384,7 @@ function GroupViewController(groupController, onBuild){
 		var $collapsible = $template.find('.collapsible');
 		var $collapseBtn = $template.find('.btn-collapse');
 		Util.makeCollapsible($collapseBtn, $collapsible);
-		
+
 		// Make it deletable by the 'Delete Group' button
 		$template.find('.btn-group-destroy').unbind('click').click(onDestroyRequested);
 
@@ -445,7 +445,7 @@ function GroupViewController(groupController, onBuild){
 			pk: match.id,
 			showbuttons: false,
 		}
-		
+
 		// Editable options inline
 		var editableOptionsInline = {
 			mode: 'popup',
@@ -501,7 +501,7 @@ function GroupViewController(groupController, onBuild){
 					$icon.toggleClass(classes[k].icon, k == value);
 					$(this).toggleClass(classes[k].btn, k == value);
 				}
-			}   
+			}
 	    }
 
 		// Assing a configuration for each editable that we will configure
@@ -535,7 +535,7 @@ function GroupViewController(groupController, onBuild){
 		    // Set values getting value from 'data-name'
 		    $editables.each(function(){
 		    	$editable = $(this);
-		    	
+
 		    	var key = $editable.attr('data-name');
 		    	var value = match[key];
 
@@ -682,7 +682,7 @@ function GroupViewController(groupController, onBuild){
 		$glyphicon.addClass('icon-rotate');
 
 		self.controller.load(afterLoad);
-		
+
 		function afterLoad(){
 			self.updateViews();
 
@@ -716,7 +716,7 @@ $(document).ready(function() {
 	});
 
 	function bootstrap(){
-		
+
 		// Load group list
 		var groups = new GroupController();
 		groups.load(function(groups){

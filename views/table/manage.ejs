@@ -25,7 +25,7 @@ dd > span{
 		</p>
 		<div class="clearfix"></div>
 	</div>
-	
+
 	<div class="col-md-12 column" id="spot-tables">
 	</div>
 </div>
@@ -40,8 +40,8 @@ dd > span{
 
 			<!-- Table tools -->
 			<div class="pull-right">
-				
-				
+
+
 				<!-- Actions of the table. Only shown when not locked -->
 				<div class="btn-group">
 					<button class="btn-table-refresh btn btn-xs btn-info">
@@ -90,7 +90,7 @@ dd > span{
 					<p class="lead">Options</p>
 
 					<dl class="dl-horizontal">
-					
+
 					<!-- Ranking (sort)-->
 					<dt>Final Score sort:</dt>
 					<dd>
@@ -126,7 +126,7 @@ dd > span{
 
 				<div class="column col-md-6">
 					<p class="lead">Help</p>
-				
+
 					<button type="button" class="btn-collapse-help btn btn-info btn-md btn-block">
 						Show Help
 					</button>
@@ -467,7 +467,7 @@ App.Views.Score = Backbone.View.extend({
 
 			// Get score value
 			// var scoreValue = (scores[i] ? scores[i].value : null) || '-';
-			// Create 
+			// Create
 			// var cell = $('<td>').text(scoreValue);
 			var cell = $('<td>').append(this.createScoreFieldForRound(i));
 			cell.insertBefore($scoresAnchor);
@@ -596,7 +596,7 @@ App.Views.Score = Backbone.View.extend({
 
 			// Post sync
 			view.fetchTableLater();
-			
+
 		});
 	},
 
@@ -676,7 +676,7 @@ App.Views.Scores = Backbone.View.extend({
 
 	appendView: function(view){
 		this.$el.append(view.render().$el);
-		
+
 		return this;
 	},
 
@@ -689,7 +689,7 @@ App.Views.Scores = Backbone.View.extend({
   ************************************************************
 */
 App.Views.Table = Backbone.View.extend({
-	
+
 	tagName: 'div',
 	className: 'panel panel-info',
 	template: _.template($('#template-table-view').html()),
@@ -704,7 +704,7 @@ App.Views.Table = Backbone.View.extend({
 		'click .btn-team-add': 'addTeam',
 		'click .btn-table-import-all': 'importFromTeams',
 	},
-	
+
 	initialize: function(){
 		console.log('initialized: '+this.model.id);
 		this.listenTo(this.model, 'change', this.render);
@@ -892,7 +892,7 @@ App.Views.Table = Backbone.View.extend({
 		console.log('refreshing: '+this.model.id);
 		this.startSync();
 		if(!_.isFunction(next)) next = null;
-		this.model.fetch({url: '/tables/associated/'+this.model.id, success: next });
+		this.model.fetch({url: '/tables/find/'+this.model.id, success: next });
 		return this;
 	},
 
@@ -986,7 +986,7 @@ App.Views.Table = Backbone.View.extend({
 
 			/*
 				To avoid duplicates, we must get all current teams on table,
-				and all existent teams. In 
+				and all existent teams. In
 			*/
 			var avoidDuplicates = $avoidDuplicates.is(':checked');
 

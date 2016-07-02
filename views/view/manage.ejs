@@ -15,7 +15,7 @@
 		</p>
 		<div class="clearfix"></div>
 	</div>
-	
+
 	<div class="col-md-12 column" id="spot-views">
 	</div>
 </div>
@@ -29,7 +29,7 @@
 
 			<!-- Table tools -->
 			<div class="pull-right">
-				
+
 				<!-- Shows only in very small screens -->
 				<div class="btn-group visible-xs">
 					<!-- Refresh -->
@@ -41,7 +41,7 @@
 					<button class="btn-view-destroy btn btn-xs btn-danger" href="#">
 						<span class="glyphicon glyphicon-trash"></span>
 					</button>
-					
+
 					<!-- New Page -->
 					<div class="btn-group">
 						<button type="button" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
@@ -65,7 +65,7 @@
 					<button class="btn-view-destroy btn btn-xs btn-danger" href="#">
 						<span class="glyphicon glyphicon-trash"></span> Delete View
 					</button>
-					
+
 					<!-- New Page -->
 					<div class="btn-group">
 						<button type="button" class="btn btn-xs btn-success dropdown-toggle" data-toggle="dropdown">
@@ -97,7 +97,7 @@
 
 			<!-- <div class="panel panel-info">
 				<div class="spot-bar-view panel-heading">
-					<strong>Group View</strong> 
+					<strong>Group View</strong>
 					<small>[1.5s, Active] - [<span class="text-success">Group A, Finals, ASD</span>]</small>
 
 					<div class="pull-right">
@@ -150,7 +150,7 @@ App.Views.Pages = Backbone.View.extend({
 	render: function(){
 		// console.log('RENDER | Pages');
 
-		// return;	
+		// return;
 		var view = this;
 
 		// Clear all
@@ -211,7 +211,7 @@ App.Views.Pages = Backbone.View.extend({
   ******************************************
 */
 App.Views.View = Backbone.View.extend({
-	
+
 	tagName: 'div',
 	className: 'panel panel-warning',
 	template: _.template($('#template-view-view').html()),
@@ -221,8 +221,8 @@ App.Views.View = Backbone.View.extend({
 		'click .btn-view-refresh': 'refresh',
 		'click .btn-view-destroy': 'confirmDestroyAction',
 	},
-	
-	pageViews: null, 
+
+	pageViews: null,
 	initialize: function(){
 		// this.listenTo(this.model, 'change', this.render);
 		this.listenTo(this.model, 'destroy', this.destroy);
@@ -348,7 +348,7 @@ App.Views.View = Backbone.View.extend({
 	refresh: function(){
 		var view = this;
 		this.startSync();
-		this.model.fetch({url: '/views/associated/'+this.model.id});
+		this.model.fetch({url: '/views/find/'+this.model.id});
 		return this;
 	},
 
@@ -488,4 +488,3 @@ $(document).ready(function(){
 });
 
 </script>
-
