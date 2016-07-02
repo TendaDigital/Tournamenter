@@ -9,7 +9,7 @@ const CleanCSS = require('clean-css');
 
 const Loader = require('../helpers/loader');
 
-const TAG = chalk.cyan('[BUILD]');
+const TAG = chalk.yellow('[BUILD]');
 
 module.exports = function build(BUILD_PATH, assets, next){
   // const APP_NAME = 'default';
@@ -19,7 +19,6 @@ module.exports = function build(BUILD_PATH, assets, next){
 
   const DIR_JS = path.join(BUILD_PATH, 'js');
   const DIR_CSS = path.join(BUILD_PATH, 'css');
-
 
   const BUILD_JS = '/modules.js';
   const BUILD_JS_MAP = '/modules.js.map';
