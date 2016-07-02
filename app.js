@@ -36,6 +36,9 @@ var configSetps = [
 	// Bootstrap Helpers
 	require('./config/helpers'),
 
+  // Load app modules
+  require('./config/modules'),
+
 	// Bootstrap Models and connect to DB
 	require('./config/models'),
 
@@ -48,11 +51,17 @@ var configSetps = [
   // Setup view engine (EJS)
 	require('./config/view-engine'),
 
+  // Setup express veiw Locals (global variables)
+	require('./config/view-locals'),
+
+  // Build Assets
+  require('./config/build'),
+
 	// Start static serving on /public folder
 	require('./config/express-assets'),
 
   // Bootstrap API routes
-	require('./config/routes-api'),
+	require('./config/routes-app'),
 
   // Bootstrap routes
   require('./config/routes'),
