@@ -13,9 +13,10 @@
 exports.handle = function(model) {
 	return function(req, res, next){
 		// console.log('update_x_editable'.red);
-		var id = req.param('pk') || req.param('id');
-		var key = req.param('name') || req.param('key');
-		var value = req.param('value') || null;
+    var params = _.merge(req.params, req.query, req.body || {});
+		var id = params.pk || params.id;
+		var key = params.name || params.key;
+		var value = params.value || null;
 
 		if(!id || !key){
 			return next('Id or Key are missing');

@@ -41,7 +41,7 @@ module.exports = {
 
 	getTeamsAsList: function(query, next){
 
-		Team.find(afterFind);
+		app.models.Team.find(afterFind);
 
 		function afterFind(err, data){
 			var teamList = [];

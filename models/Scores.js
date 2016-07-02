@@ -8,7 +8,7 @@
 
 module.exports = {
 
-  identity: 'score',
+  identity: 'scores',
   connection: 'default',
 
   attributes: {

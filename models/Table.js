@@ -35,7 +35,7 @@ var Table = {
 			with key 'scores'.
 
 			Ex:
-			Scores.find({tableId: 'id'}).done(function(collection){
+			Scores.find({tableId: 'id'}).exec(function(collection){
 				table.scores = collection;
 			});
 

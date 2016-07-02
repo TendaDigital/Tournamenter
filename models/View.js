@@ -91,8 +91,7 @@ module.exports = {
 		},
 	},
 
-	beforeValidation: function(values, next){
-
+	beforeValidate: function(values, next){
 		if(values.pages){
 			// Defaults for each page
 			var pageDefaults = {
@@ -120,7 +119,7 @@ module.exports = {
 					newPage.disabled = 'false';
 
 				// Call's module beforeValidation method, if exist
-				var module = Modules.get('pageview', newPage.module);
+				var module = app.helpers.Modules.get('pageview', newPage.module);
 
 				if(module && module.beforeValidation)
 					newPage = module.beforeValidation(newPage);
