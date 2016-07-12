@@ -2,6 +2,7 @@
   "name": "tournamenter",
   "version": "2.0.0",
   "description": "Tournament Event Manager made easy",
+  "bin": "./app.js",
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "body-parser": "^1.15.2",
