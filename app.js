@@ -70,7 +70,7 @@ var configSetps = [
 	require('./config/lift'),
 ];
 
-function lift(cb){
+module.exports = function lift(cb){
   async.eachSeries(configSetps, function (config, next){
     // Call configuration step with the app, and the callback
     config(app, next);
@@ -89,4 +89,4 @@ function lift(cb){
 
 // Autolift if it's the root module
 if(require.main === module)
-  lift();
+  module.exports();
