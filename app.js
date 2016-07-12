@@ -1,5 +1,11 @@
 var TAG = 'app';
 
+/*
+ * This snippet allows the app to be runned from
+ * another working directory without concerns.
+ */
+process.chdir(__dirname);
+
 /**
  * Module dependencies
  */
