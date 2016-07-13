@@ -1,3 +1,5 @@
+var path = require('path');
+
 var env = process.env;
 var port = process.env.PORT || 8000;
 var domain = 'http://yourwebsite.com.br';
@@ -12,7 +14,7 @@ module.exports = {
   version: env.APP_NAME || require('../../package.json').version,
   password: env.PASSWORD || null,
 
-  appLogo: env.APP_LOGO || (__dirname + '/../../public/img/branding.png'),
+  appLogo: env.APP_LOGO || path.join(__dirname, '../../public/img/branding.png'),
 
 	session: {
 		secret: 'somesecretstring',
@@ -21,7 +23,7 @@ module.exports = {
 	adapter: env.DB_ADAPTER || 'sails-disk',
 
   connection: {
-    filePath: env.DB_FILEPATH || './.tmp/'+appUid,
+    filePath: path.join(env.DB_FOLDER || './.tmp/', appUid + '.db'),
     url: env.DB_URL || null,
   },
 
