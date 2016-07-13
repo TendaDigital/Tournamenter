@@ -12,6 +12,8 @@ module.exports = {
   version: env.APP_NAME || require('../../package.json').version,
   password: env.PASSWORD || null,
 
+  appLogo: env.APP_LOGO || (__dirname + '/../../public/img/branding.png'),
+
 	session: {
 		secret: 'somesecretstring',
 	},
