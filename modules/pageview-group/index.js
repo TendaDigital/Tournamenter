@@ -33,7 +33,7 @@ module.exports = {
 	},
 
 	process: function (group, next) {
-		sails.controllers.group._findAssociated(group.options.tables || null, afterAssociate);
+		app.controllers.Group._findAssociated(group.options.tables || null, afterAssociate);
 
 		function afterAssociate(data){
 			group.data = data;

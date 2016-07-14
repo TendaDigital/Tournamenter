@@ -130,8 +130,8 @@ function findAssociated(id, next){
 	*/
 	function processTables(){
 		// Now we go through all Tables and call the method table on it
-		_.invoke(data, 'calculate');
-		_.invoke(data, 'headers');
+		_.invokeMap(data, 'calculate');
+		_.invokeMap(data, 'headers');
 
 		// Now we associate team's data
 		associateTeams();
