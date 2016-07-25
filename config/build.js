@@ -11,7 +11,7 @@ module.exports = function build(app, next){
     jst: [],
     serve: [],
   };
-  
+
   // Set tournamenter path server
   assets.serve.push(path.join(__dirname, '../public'));
 
@@ -21,7 +21,7 @@ module.exports = function build(app, next){
     if(!_.isFunction(mod.getAssets))
       return;
 
-    var modAssets = mod.getAssets();
+    var modAssets = mod.getAssets && mod.getAssets();
 
     if(!modAssets)
       return;

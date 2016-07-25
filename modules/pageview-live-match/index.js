@@ -38,7 +38,7 @@ module.exports = {
 			next(null, match);
 		}else{
 			// INT/STRING: We are dealing with a match on the database
-			sails.controllers.match._findAssociated(match.options.match || null, afterAssociate);
+			app.controllers.match._findAssociated(match.options.match || null, afterAssociate);
 			// console.log('&&', match);
 			// sails.controllers.match._findAssociated(20, afterAssociate);
 

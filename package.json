@@ -1,6 +1,6 @@
 {
   "name": "tournamenter",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Tournament Event Manager made easy",
   "bin": "./app.js",
   "dependencies": {
@@ -39,15 +39,11 @@
   },
   "main": "app.js",
   "author": {
-    "name": "RoboCupDev Team",
-    "email": "robocupdev@gmail.com"
+    "name": "Ivan Seidel",
+    "email": "ivanseidel@gmail.com",
+    "url": "https://github.com/ivanseidel"
   },
   "contributors": [
-    {
-      "name": "Ivan Seidel Gomes",
-      "email": "ivanseidel@gmail.com",
-      "url": "http://tendadigital.net/"
-    },
     {
       "name": "Marek Suppa"
     }
