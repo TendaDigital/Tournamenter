@@ -46,7 +46,7 @@ function findAssociated(id, next){
 	var model;
 	var checked = 0;
 
-	Match.findById(id).exec(function afterFound(err, models) {
+	app.models.Match.findById(id).exec(function afterFound(err, models) {
 		if(!err) return afterFindMatch(models);
 		next(err, null);
 	});
@@ -59,18 +59,18 @@ function findAssociated(id, next){
 		model = models[0];
 
 		// Fetch Both Teams
-		Team.findById(model.teamAId).exec(function(err, models){
+		app.models.Team.findById(model.teamAId).exec(function(err, models){
 			model.teamA = models.length ? models[0] : null;
 			checkFetch();
 		});
 
-		Team.findById(model.teamBId).exec(function(err, models){
+		app.models.Team.findById(model.teamBId).exec(function(err, models){
 			model.teamB = models.length ? models[0] : null;
 			checkFetch();
 		});
 
 		// Fetch Group
-		Group.findById(model.groupId).exec(function(err, models){
+		app.models.Group.findById(model.groupId).exec(function(err, models){
 			model.group = models.length ? models[0] : null;
 			checkFetch();
 		});
