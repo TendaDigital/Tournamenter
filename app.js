@@ -43,7 +43,7 @@ var configSetps = [
 	require('./config/helpers'),
 
   // Load app modules
-  require('./config/modules'),
+  require('./config/modules-load'),
 
 	// Bootstrap Models and connect to DB
 	require('./config/models'),
@@ -68,6 +68,9 @@ var configSetps = [
 
   // Bootstrap API routes
 	require('./config/routes-app'),
+
+  // Initialize Modules
+  require('./config/modules-initialize'),
 
   // Bootstrap routes
   require('./config/routes'),

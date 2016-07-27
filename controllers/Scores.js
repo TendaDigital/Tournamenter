@@ -22,7 +22,7 @@ module.exports = {
 		}
 
 		// Find the score
-    	Scores.findOne(scoreId).exec(function (err, score){
+    	app.models.Scores.findOne(scoreId).exec(function (err, score){
 	    	if(err) return next('Failed to get score: ' + err);
 
 	    	if(!score)
@@ -39,7 +39,7 @@ module.exports = {
 
 	    	// console.log(update);
 	    	// next();
-	    	Scores.update(score.id, update, function (err, model){
+	    	app.models.Scores.update(score.id, update, function (err, model){
 	    		if(err) return next(err);
 	    		console.log(model);
 	    		return res.json(model && model[0]);
