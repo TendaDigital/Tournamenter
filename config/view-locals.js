@@ -10,6 +10,12 @@ module.exports = function (app, next){
       menus.push(...ctrl._config.menus);
   });
 
+  // Include menus from extensions that required that
+  _.forEach(app.helpers.Modules.types['menu'] || [], mod => {
+    if('menus' in mod)
+      menus.push(...mod.menus);
+  });
+
   menus = _.sortBy(menus, 'order');
 
   // Set Locals that are constant
