@@ -11,7 +11,7 @@ module.exports = {
 
   appUid: appUid,
   appName: env.APP_NAME || require('../../package.json').name,
-  version: env.APP_NAME || require('../../package.json').version,
+  version: require('../../package.json').version,
   password: env.PASSWORD || null,
 
   appLogo: env.APP_LOGO || path.join(__dirname, '../../public/img/branding.png'),
