@@ -22,7 +22,10 @@ module.exports = {
 				});
 			});
 
-		});
+		}, {
+      // When `manage` is set to true, it calculates with the manageRows columns
+      manage: true,
+    });
 	},
 
 
@@ -31,7 +34,10 @@ module.exports = {
 		var id = req.params.id || null;
 
 		// Get collection associated
-		findAssociated(id, finishRender);
+		findAssociated(id, finishRender, {
+      // When `manage` is set to true, it calculates with the manageRows columns
+      manage: true,
+    });
 
 		function finishRender(data){
 			// If none object found with given id return error
@@ -73,8 +79,10 @@ module.exports = {
 	Also, to associate every row with an existing team, so that
 	we can use it's information in data.
 */
-function findAssociated(id, next){
+function findAssociated(id, next, opts){
 	var where = (id ? {id: id} : null);
+
+  opts = opts || {};
 
 	// Query Table model, and call afterFindTables when done.
 	var finding = app.models.Table
