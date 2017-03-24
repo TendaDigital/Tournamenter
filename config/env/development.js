@@ -4,6 +4,8 @@ var env = process.env;
 var port = process.env.PORT || 3000;
 var domain = 'http://localhost:'+port;
 var appUid = env.APP_UID || env.APP_NAME || 'tournamenter';
+var dbPath = env.DB_FOLDER || './.tmp/'
+var dbFile = dbPath.indexOf('.db') >= 0 ? dbPath : path.join(dbPath, appUid + '.db')
 
 module.exports = {
 	port: port,
@@ -23,7 +25,7 @@ module.exports = {
 	adapter: env.DB_ADAPTER || 'sails-disk',
 
   connection: {
-    filePath: path.join(env.DB_FOLDER || './.tmp/', appUid + '.db'),
+    filePath: dbFile,
     url: env.DB_URL || null,
   },
 
