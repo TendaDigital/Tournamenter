@@ -159,7 +159,7 @@ var Table = {
 		evaluateMethod: {
 			type: 'string',
 			defaultsTo: 'sum',
-			oneOfMethods: true // <- type of validation
+			// oneOfMethods: true // <- type of validation
 		},
 
 		/*
@@ -345,7 +345,13 @@ function generateTableDataInsideScores(){
 		}
 
 		// Compute final score and adds to scoreData
-		var finalScores = evalMethod(scoreValues) || 0;
+		var finalScores = '?';
+
+		// If evalMethod is set, let's compute the score. 
+		if(evalMethod) {
+			finalScores = evalMethod(scoreValues) || 0;
+		}
+
 		var showScore = finalScores;
 
 		if(_.isArray(finalScores)){
