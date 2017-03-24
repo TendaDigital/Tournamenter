@@ -19,6 +19,11 @@ module.exports = function (app, next) {
   // Load all included modules
   if (extensions.length > 0) {
     extensions.forEach( ext => {
+      // Convert to relative extension if starts with `.`
+      if(ext[0] == '.') {
+        ext = path.join(app.config.root, ext);
+      }
+      
       app.helpers.Modules.loadModule(ext);
     })
   }
