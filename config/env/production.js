@@ -25,7 +25,7 @@ module.exports = {
 	adapter: env.DB_ADAPTER || 'sails-disk',
 
   connection: {
-    filePath: dbFile,
+    fileName: dbFile,
     url: env.DB_URL || null,
   },
 

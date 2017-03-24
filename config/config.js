@@ -45,7 +45,7 @@ console.log();
 console.log(TAG, chalk.cyan('             DATABASE'));
 console.log(TAG, chalk.blue('        url:'), module.exports.connection.url || '<no url>');
 console.log(TAG, chalk.blue('    adapter:'), module.exports.adapter);
-console.log(TAG, chalk.blue('   filePath:'), module.exports.connection.filePath);
+console.log(TAG, chalk.blue('   fileName:'), module.exports.connection.fileName);
 console.log();
 console.log(TAG, chalk.cyan('             EXTENSIONS [TOURNAMENTER_EXTENSIONS]'));
 console.log(TAG, chalk.blue(' extensions:'), process.env.TOURNAMENTER_EXTENSIONS || '<no extensions>');
