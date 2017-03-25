@@ -1,6 +1,6 @@
 {
   "name": "tournamenter",
-  "version": "2.1.5",
+  "version": "2.1.6",
   "description": "Tournament Event Manager made easy",
   "bin": "./app.js",
   "dependencies": {
