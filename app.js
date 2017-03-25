@@ -4,7 +4,11 @@ var TAG = 'app';
  * This snippet allows the app to be runned from
  * another working directory without concerns.
  */
-process.chdir(__dirname);
+try {
+  process.chdir(__dirname);
+} catch (e) {
+  console.error(TAG, 'Could not set cwd to Tournamenter path. Might cause problems.')
+}
 
 /**
  * Module dependencies
