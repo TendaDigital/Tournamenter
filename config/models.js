@@ -1,5 +1,6 @@
 var TAG = _TAG('config.models');
 
+var path = require('path');
 var Waterline = require('waterline');
 
 module.exports = function (app, next){
@@ -7,7 +8,7 @@ module.exports = function (app, next){
   var waterline = app.waterline = new Waterline();
 
   // Load All controllers
-  var modelsDir = __dirname + '/..' + '/models/';
+  var modelsDir = path.join(__dirname, '/../models');
   var models = app.helpers.loader.load(modelsDir);
 
   // Convert to model object and load into waterline
