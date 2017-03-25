@@ -13,6 +13,7 @@ var enviroment = require('./env/'+ENV);
 var defaults = {
   root: path.join(__dirname, '/..'),
   env: ENV,
+  tmpPath: process.env.TMP_PATH || path.join(__dirname, '/../.tmp'),
 };
 
 /**
@@ -29,6 +30,7 @@ console.log();
 console.log(TAG, chalk.cyan('             SERVER'));
 console.log(TAG, chalk.blue('       root:'), module.exports.root);
 console.log(TAG, chalk.blue('       port:'), module.exports.port);
+console.log(TAG, chalk.blue('    tmpPath:'), module.exports.tmpPath);
 console.log();
 console.log(TAG, chalk.cyan('             TOURNAMENTER'));
 console.log(TAG, chalk.blue('    version:'), module.exports.version);

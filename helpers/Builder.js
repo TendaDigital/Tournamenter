@@ -12,11 +12,6 @@ const Loader = require('../helpers/loader');
 const TAG = chalk.yellow('[BUILD]');
 
 module.exports = function build(BUILD_PATH, assets, next){
-  // const APP_NAME = 'default';
-  // const BASE_PATH = path.join(__dirname, '../.tmp/', APP_NAME);
-
-  // const BUILD_PATH = path.join(BASE_PATH, 'public');
-
   const DIR_JS = path.join(BUILD_PATH, 'js');
   const DIR_CSS = path.join(BUILD_PATH, 'css');
 

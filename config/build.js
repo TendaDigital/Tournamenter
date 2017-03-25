@@ -3,7 +3,7 @@ var express = require('express');
 
 module.exports = function build(app, next){
 
-  const BUILD_PATH = path.join(__dirname, '../.tmp/', app.config.appName);
+  const BUILD_PATH = path.join(app.config.tmpPath, app.config.appName);
 
   var assets = app.config.assetPaths = {
     js: [],
