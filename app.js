@@ -16,7 +16,7 @@ var async = require('async');
  * Global App Object
  */
 var app = {
-	config: require('./config/config'),
+  config: require('./config/config'),
 };
 
 /**
@@ -36,38 +36,38 @@ global._TAG = function (tag, color = 'cyan'){
  * Bootstrap Process
  */
 var configSetps = [
-	// Setup Logging
-	// require('./config/log'),
+  // Setup Logging
+  // require('./config/log'),
 
-	// Bootstrap Helpers
-	require('./config/helpers'),
+  // Bootstrap Helpers
+  require('./config/helpers'),
 
   // Load app modules
   require('./config/modules-load'),
 
-	// Bootstrap Models and connect to DB
-	require('./config/models'),
+  // Bootstrap Models and connect to DB
+  require('./config/models'),
 
-	// Bootstrap Controllers
-	require('./config/controllers'),
+  // Bootstrap Controllers
+  require('./config/controllers'),
 
   // Bootstrap application settings
-	require('./config/express'),
+  require('./config/express'),
 
   // Setup view engine (EJS)
-	require('./config/view-engine'),
+  require('./config/view-engine'),
 
   // Setup express veiw Locals (global variables)
-	require('./config/view-locals'),
+  require('./config/view-locals'),
 
   // Build Assets
   require('./config/build'),
 
-	// Start static serving on /public folder
-	require('./config/express-assets'),
+  // Start static serving on /public folder
+  require('./config/express-assets'),
 
   // Bootstrap API routes
-	require('./config/routes-app'),
+  require('./config/routes-app'),
 
   // Initialize Modules
   require('./config/modules-initialize'),
@@ -75,8 +75,8 @@ var configSetps = [
   // Bootstrap routes
   require('./config/routes'),
 
-	// Start Server
-	require('./config/lift'),
+  // Start Server
+  require('./config/lift'),
 ];
 
 module.exports = function lift(cb){
