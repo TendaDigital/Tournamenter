@@ -18,7 +18,6 @@ function init(app, next){
 
 	var server = app.server = express();
 	var config = app.config;
-	var env = app.config.env;
 	var passport = app.passport;
 
 	// Compression middleware (should be placed before express.static)
@@ -29,33 +28,13 @@ function init(app, next){
 	// Static files middleware
 	server.use(express.static(config.root + '/public'));
 
-	// Use winston on production
-	var log;
-	if (env !== 'development') {
-		log = {
-			stream: {
-				write: function (message, encoding) {
-					winston.info(message);
-				}
-			}
-		};
-	} else {
-		log = 'dev';
-	}
-
-	// Don't log during tests
 	// Logging middleware
 	var logFormat = '[:method : :status] :date[iso]\t(:response-time ms :res[content-length]b) :url - :remote-addr';
-
-	if (env == 'development')
-		server.use(morgan(logFormat));
-	else if (env == 'production')
-		server.use(morgan(logFormat));
+	server.use(morgan(logFormat));
 
 	// expose package.json to views
 	server.use(function (req, res, next) {
 		res.locals.pkg = pkg;
-		res.locals.env = env;
 		next();
 	});
 
