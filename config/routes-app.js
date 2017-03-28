@@ -75,6 +75,8 @@ function config(app, next){
   server.patch('/views/:id',              auth, ctrls.View.update);
   restify('View', 'views');
 
+  restify('Config', 'configs');
+
 	next();
 }
 
