@@ -35,10 +35,8 @@ function config(app, next){
 		server.delete(path+'/:id',            auth, Ctrl.destroy);
 	}
 
-  server.get('/',                         auth, ctrls.Team.manage);
   server.get('/teams/teamlist',                 ctrls.Team.teamlist);
 
-  server.get('/',                               ctrls.Team.manage);
   server.get('/login',                          ctrls.User.login);
   server.post('/login',                         ctrls.User.login);
   server.get('/logout',                         ctrls.User.logout);

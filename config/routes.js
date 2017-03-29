@@ -5,8 +5,11 @@ function config(app, next){
 	var server = app.server;
 
 	/*
-	 * Routes applied to the Root Scope
+	 * We set the root route last, so that plugins can modify it
 	 */
+	const auth = app.helpers.isAuthenticated;
+	server.get('/', auth, app.controllers.Team.manage);
+
 
 	/**
 	 * Error handling
