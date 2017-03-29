@@ -42,6 +42,7 @@ function config(app, next){
   server.get('/logout',                         ctrls.User.logout);
 
   server.get('/teams/manage',             auth, ctrls.Team.manage);
+  server.get('/teams/find',               auth, ctrls.Team.teamlist);
   server.post('/teams/post',              auth, ctrls.Team.post);
   server.patch('/teams/:id',              auth, ctrls.Team.update);
   restify('Team', 'teams');
