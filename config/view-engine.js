@@ -9,7 +9,7 @@ module.exports = function viewEngine(app, next){
   app.server.set('view engine', 'ejs');
 
   // Layout rendering
-  app.server.set('views', app.config.root + '/views')
+  app.server.set('views', [app.config.root + '/views'])
   app.server.set('layout', 'layout')
   app.server.use(expressLayouts)
 
