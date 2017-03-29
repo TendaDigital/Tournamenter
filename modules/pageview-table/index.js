@@ -34,7 +34,9 @@ module.exports = {
 	process: function (page, next) {
 		// page.data = {};
 		// next(null, page);
-		app.controllers.Table._findAssociated(page.options.tables || null, afterAssociate);
+		app.controllers.Table._findAssociated(page.options.tables || null, afterAssociate, {
+      isView: true,
+    });
 
 		function afterAssociate(data){
 			page.data = data;

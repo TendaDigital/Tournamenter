@@ -130,16 +130,23 @@ function findAssociated(id, next, opts){
 		data = results;
 
 		// Call next step
-		processTables();
+		processTables(opts);
 	}
 
 	/*
 		After scores are associated with the table, we can process it
 	*/
 	function processTables(){
+		// If `isView` is set on opts, change data.columns to data.viewColumns
+		if (opts && opts.isView) {
+			_.forEach(data, function (table){
+				table.columns = table.viewColumns || table.columns
+			})
+		}
+
 		// Now we go through all Tables and call the method table on it
-		_.invokeMap(data, 'calculate');
-		_.invokeMap(data, 'headers');
+		_.invokeMap(data, 'calculate', null);
+		_.invokeMap(data, 'headers', null);
 
 		// Now we associate team's data
 		associateTeams();

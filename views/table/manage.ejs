@@ -79,7 +79,7 @@ dd > span{
 			</div>
 
 			<span class="panel-title">
-				<strong><span class="table-name" data-name="name" data-title="Table name">{{name}}</span></strong>
+				<strong><span class="table-name" data-name="name" data-title="Table name">{{data.name}}</span></strong>
 			</span>
 		</div>
 
@@ -100,19 +100,25 @@ dd > span{
 					<!-- evaluateMethod -->
 					<dt>Final Score function:</dt>
 					<dd>
-						<span class="table-evaluateMethod" data-title="Score Algorithm" data-name="evaluateMethod">{{evaluateMethod}}</span>
+						<span class="table-evaluateMethod" data-title="Score Algorithm" data-name="evaluateMethod">{{data.evaluateMethod}}</span>
 					</dd>
 
 					<!-- Columns -->
 					<dt>Score Columns:</dt>
 					<dd>
-						<span class="table-columns" data-title="Data Columns" data-name="columns">{{columns}}</span>
+						<span class="table-columns" data-title="Data Columns" data-name="columns">{{data.columns}}</span>
+					</dd>
+
+					<!-- Columns -->
+					<dt>Score Columns (View):</dt>
+					<dd>
+						<span class="table-viewColumns" data-title="Data Columns (View)" data-name="viewColumns">{{data.viewColumns}}</span>
 					</dd>
 
 					<!-- Score headers -->
 					<dt>Score Column names:</dt>
 					<dd>
-						<span class="table-headerScore" data-title="Score Headers" data-name="headerScore">{{headerScore}}</span>
+						<span class="table-headerScore" data-title="Score Headers" data-name="headerScore">{{data.headerScore}}</span>
 					</dd>
 
 					<!-- Column names -->
@@ -198,6 +204,15 @@ dd > span{
 							</small>
 						</dd>
 
+						<dt>Score Columns (view)</dt>
+						<dd>
+							<small>
+								Number of columns to compute and show on <code>Views</code> only.. Use this if you want to hide any senstitive information while they should not be presented yet. <br/>
+								Clear it's content (default) if it should always match Score Columns. In that case, the view will
+								have the same number of columns as the configuration "Score Columns".
+							</small>
+						</dd>
+
 						<dt>Score Columns names</dt>
 						<dd>
 							<p><small>
@@ -247,17 +262,17 @@ dd > span{
 <script type="text/template" id="template-scores-header">
 	<tr>
 		<th>
-			<span class="editable" data-name="headerRank">{{headerRank}}</span>
+			<span class="editable" data-name="headerRank">{{data.headerRank}}</span>
 		</th>
 
 		<th class="anchor-score">
-			<span class="editable" data-name="headerTeam">{{headerTeam}}</span>
+			<span class="editable" data-name="headerTeam">{{data.headerTeam}}</span>
 		</th>
 		<!-- Use the class anchor-score to know where to prepend extra score headers -->
 		<!-- <th class="">
-			<span class="editable" data-name="headerScore">{{headerScore}}</span>
+			<span class="editable" data-name="headerScore">{{data.headerScore}}</span>
 		</th> -->
-		<th><span class="editable" data-name="headerFinal">{{headerFinal}}</span></th>
+		<th><span class="editable" data-name="headerFinal">{{data.headerFinal}}</span></th>
 		<th class="">
 			<!-- Actions of the table. Only shown when not locked -->
 			<div class="btn-group pull-right">
@@ -295,7 +310,7 @@ dd > span{
 <script type="text/template" id="template-score-value">
 
 	<button type="button" class="btn-change-score btn btn-xs">
-		<span class="glyphicon glyphicon-pencil"></span> {{value}}
+		<span class="glyphicon glyphicon-pencil"></span> {{data.value}}
 	</button>
 
 </script>
@@ -303,10 +318,10 @@ dd > span{
 
 <!--  SCORES DATA VIEW TEMPLATE -->
 <script type="text/template" id="template-scores-row">
-	<td>{{rank}}</td>
+	<td>{{data.rank}}</td>
 	<td><span class="score-team" data-name="teamId"></span></td>
 	<!-- Use tde class anchor-score to know where to prepend extra score headers -->
-	<td class="anchor-score">{{final}}</td>
+	<td class="anchor-score">{{data.final}}</td>
 	<td>
 		<!-- Team tools -->
 		<div class="pull-right visible-xs">
@@ -446,7 +461,7 @@ App.Views.Score = Backbone.View.extend({
 		this.table = this.model.collection.table;
 	},
 
-	templateScoresRow: _.template($('#template-scores-row').html()),
+	templateScoresRow: _.template($('#template-scores-row').html(), {variable: 'data'}),
 	render: function(){
 		var self = this;
 
@@ -496,7 +511,7 @@ App.Views.Score = Backbone.View.extend({
 
 		Score fields btn's are made with class .btn-change-score
 	*/
-	templateScoreValue: _.template($('#template-score-value').html()),
+	templateScoreValue: _.template($('#template-score-value').html(), {variable: 'data'}),
 	createScoreFieldForRound: function(round){
 		round = round*1;
 		var score = this.model.getScore(round);
@@ -692,7 +707,7 @@ App.Views.Table = Backbone.View.extend({
 
 	tagName: 'div',
 	className: 'panel panel-info',
-	template: _.template($('#template-table-view').html()),
+	template: _.template($('#template-table-view').html(), {variable: 'data'}),
 
 	// Scores view nested to this view
 	scoresView: null,
@@ -771,7 +786,7 @@ App.Views.Table = Backbone.View.extend({
 	},
 
 	// Render Scores header
-	templateScoresHeader: _.template($('#template-scores-header').html()),
+	templateScoresHeader: _.template($('#template-scores-header').html(), {variable: 'data'}),
 	renderScoresHeader: function(){
 		// Find table spot
 		$table = this.$('.spot-scores');
@@ -829,6 +844,10 @@ App.Views.Table = Backbone.View.extend({
 	configureOptions: function(){
 		// Make editable fields
 		App.Mixins.editInPlace(this.model, this.$('.table-columns'), {
+			mode: 'popup',
+		});
+
+		App.Mixins.editInPlace(this.model, this.$('.table-viewColumns'), {
 			mode: 'popup',
 		});
 

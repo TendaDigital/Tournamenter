@@ -97,6 +97,18 @@ var Table = {
 		},
 
 		/*
+			Field specific for "Views". If set to null or 0, will use `columns` value
+			instead. If this value is a number, will use it's value to compute scores
+			in views.
+		*/
+		viewColumns: {
+			type: 'int',
+			defaultsTo: null,
+			min: 1,
+			max: 20,
+		},
+
+		/*
 			This affects how the 'Ranking' will be exposed.
 			Wheater a 'lower' final score will be ranked better,
 			or an 'higher' final score will be ranked better.
@@ -280,9 +292,9 @@ function getScoreHeadersNames(table){
 /*
 	Generates the table data inside scores objects
 */
-function generateTableDataInsideScores(){
+function generateTableDataInsideScores(table){
 	// Save to allow in function referencte
-	var table = this;
+	table = table || this;
 	var columns = table.columns*1;
 
 	/*
