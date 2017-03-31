@@ -1,6 +1,6 @@
 language: nodejs
 node_js:
-- '7.8'
+- 7.8
 before_script:
 - npm install -g npm
 deploy:
