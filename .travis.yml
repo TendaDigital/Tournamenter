@@ -1,0 +1,12 @@
+language: nodejs
+node_js:
+- '7.8'
+before_script:
+- npm install -g npm
+deploy:
+  provider: npm
+  email: ivanseidel@gmail.com
+  api_key:
+    secure: Ri9dm2Ks2sTNJLnIdslxMX/Zt1QUz7qyBsV6/wHv3oClTVKOK0nvJPU7CPvqp+kQm8t93aw9ofT1zJGPe6fkeWMQqU1sED1ETFdUPnJjaTDwz0Z5mHFT8GENj6a7od4gmV4+sg1/hdPeViJhOAueBXItb8u9dyinKwaqjAxY3yByy4HGPAjsC1MI7pTB58Q20W+EL7Rtf2J0qKUBdTpfdZDCBZ2n993U5JTBaiDWIps4y29jW5x7MYmKyrSAaVZvIs8Rkohdjblqd2Rq2eNrrKewjaPVaxeyxzZR5L2RSHnsQakc9uSdqstYWh/bj//oo9t+WAu3F70mQEEaz22Bv6ZTfwiNB+dq/974JiFJ1TSnK4MCAnL4hxtjP2ge/15xKNDNFDE/KAvka91Ehu5yCMaEHjCqFEsE70M+Y8xERK5EfuPayqIVAQ0PXD+a3zgDBZ5GYN5Qwt+D1YG42hOK3svGGLRziOVkRbgAxXQBYiTKQyxw+QPaINshoYue25KvC/lk1kkWv/XLCkfPC7chm8lz1rCo3rsnV1fB25cfHyMXII+o2BINvFvi5D5Tl9ogMSkNmJLQ1Yc+cA1TOxcAGmW7mcY6dTXhEiBFYmCjpL6Hxh9xhOzCKOHtzftQswG1sH9j+FVC52PPO4HbKkrFFOqIqPrFrGPLc5/kFhWGW+w=
+  on:
+    repo: ivanseidel/Tournamenter
