@@ -1,8 +1,8 @@
 ![Tournamenter](media/Tournamenter.png)
+[![NPM Version][npm-version-image]][npm-version-url]
 
 > Manage Tournament events - Scores, Tables, Groups and Public Views
 
-[![NPM Version][npm-version-image]][npm-version-url]
 
 [npm-version-image]: https://img.shields.io/npm/v/tournamenter.svg?style=flat
 [npm-version-url]: https://www.npmjs.com/package/tournamenter
