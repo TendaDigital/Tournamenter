@@ -1,13 +1,14 @@
 ![Tournamenter](media/Tournamenter.png)
 [![NPM Version][npm-version-image]][npm-version-url]
 
-> Manage Tournament events - Scores, Tables, Groups and Public Views
-
+> Manage Tournament events - Scores, Tables, Groups and Public Views.
 
 [npm-version-image]: https://img.shields.io/npm/v/tournamenter.svg?style=flat
 [npm-version-url]: https://www.npmjs.com/package/tournamenter
 
 **Don't like to use Terminal? Use the Native Desktop Application for managing Server instances on Windows, Linux and Mac OSx:** [TournamenterApp](https://github.com/ivanseidel/TournamenterApp)
+
+View a Demo hosted @ heroku: [Tournamenter DEMO](http://tournamenter-demo.herokuapp.com/)
 
 ![Tournamenter GIF](media/Tournamenter.gif)
 
