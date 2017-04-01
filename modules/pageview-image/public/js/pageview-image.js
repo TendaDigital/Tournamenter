@@ -10,6 +10,8 @@
 */
 (function () {
 
+	const MAX_FILE_SIZE = 1024 * 50
+
 	// Get default pageview module to extend
 	defaultModule = _.clone(Modules.PageViews['pageview']);
 
@@ -146,11 +148,22 @@
 		readFile: function (element, next) {
 			if(!element.files || !element.files[0] ) return next('No file');
 
+			// Skip large images
+			var file = element.files[0]
+			console.log(file)
+			if (file.size > MAX_FILE_SIZE) {
+				$(element).val('')
+				var msg = 'Image cannot be larger than ' + (MAX_FILE_SIZE / 1024) + 'KB'
+				alert(msg)
+				next(msg)
+				return;
+			}
+
 			var FR= new FileReader();
 			FR.onload = function(e) {
 				console.log(e);
 				next(null, e.target.result);
-			};       
+			};
 			FR.readAsDataURL( element.files[0] );
 		},
 
