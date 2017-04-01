@@ -10,7 +10,7 @@
 */
 (function () {
 
-	const MAX_FILE_SIZE = 1024 * 50
+	const MAX_FILE_SIZE = 1024 * 80
 
 	// Get default pageview module to extend
 	defaultModule = _.clone(Modules.PageViews['pageview']);
