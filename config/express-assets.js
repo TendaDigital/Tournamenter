@@ -7,10 +7,7 @@ function config(app, next){
   console.log(TAG, 'Setup static serving');
 
   // Serve main logo
-  app.server.get('/branding.png', (req, res) => {
-    console.log(app.config.appLogo);
-    res.sendFile(path.resolve(app.config.appLogo));
-  })
+  app.server.get('/branding.png', app.controllers.Api.branding)
 
   // Serve assets
   _.forEach(app.config.assetPaths.serve, (path) => {

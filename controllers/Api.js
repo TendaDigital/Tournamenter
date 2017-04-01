@@ -1,7 +1,12 @@
-var count = 0;
+const path = require('path')
 
+var count = 0;
 exports.ping = function (req, res){
 
-	res.send({hello: 'world', count: count++});
+	res.send({ping: count++});
 
+}
+
+exports.branding = (req, res) => {
+  res.sendFile(path.resolve(app.config.appLogo));
 }
