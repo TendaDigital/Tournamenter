@@ -40,9 +40,13 @@ function init(app, next){
 
 	// bodyParser should be above methodOverride
 	server.use(bodyParser.urlencoded({
-		extended: true
+		extended: true,
+		limit: app.config.requestSizeLimit,
 	}));
-	server.use(bodyParser.json());
+	server.use(bodyParser.json({ 
+		limit: app.config.requestSizeLimit,
+	}));
+	
 	server.use(methodOverride(function (req, res) {
 		if (req.body && typeof req.body === 'object' && '_method' in req.body) {
 			// look in urlencoded POST bodies and delete it

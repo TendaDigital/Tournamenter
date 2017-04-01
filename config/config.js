@@ -67,6 +67,8 @@ module.exports = {
   session: {
     secret: 'somesecretstring',
   },
+
+  requestSizeLimit: '500kb',
 };
 
 /**
