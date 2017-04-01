@@ -398,6 +398,7 @@ App.Views.Views = Backbone.View.extend({
 		this.listenTo(this.collection, 'add', this.add);
 		this.listenTo(this.collection, 'remove', this.remove);
 		this.listenTo(this.collection, 'reset', this.render);
+		this.listenTo(this.collection, 'error', this.error);
 
 		this.$tablesSpot = this.$('#spot-views');
 	},
@@ -448,6 +449,13 @@ App.Views.Views = Backbone.View.extend({
 		model.trigger('destroy');
 		delete this._views[model.id];
 		return this;
+	},
+
+	error: function(error){
+		alert('An error occurred while saving the data.\n' + 
+					'This is probably caused for:\n'+
+					' - Server is down\n' + 
+					' - contents of the view exceeded it`s limit\n\n More info:\n' + error)
 	},
 
 	appendView: function(view, shouldAnimate){
