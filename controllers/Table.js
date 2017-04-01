@@ -53,6 +53,46 @@ module.exports = {
 		}
 	},
 
+	csv: function (req, res, next) {
+		console.log('CSV download', req.params)
+		// Get id
+		var id = req.params.id || null;
+		var title = null
+
+		// Id not set?
+		if (!id) {
+			return next();
+		}
+
+		// Get collection associated
+		findAssociated(id, generateCSV, {
+      // When `manage` is set to true, it calculates with the manageRows columns
+      manage: true,
+    });
+
+    function generateCSV(data){
+			data = data[0];
+
+			// If none object found with given id return error
+			if(!data)
+				return next();
+
+			// Save name for download purposes
+			title = data.name
+
+			// Process CSV from table
+			app.helpers.TableToCSV(data, finishRender)
+		}
+
+		function finishRender(err, csv) {
+			if (err)
+				return next(err)
+
+			res.attachment(title+'.csv')
+			res.set('Content-Type', 'text/csv');
+			res.status(200).send(csv);
+		}
+	},
 
 	/**
 	* Overrides for the settings in `config/controllers.js`

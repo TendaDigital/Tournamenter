@@ -59,14 +59,18 @@ dd > span{
 							<span class="glyphicon glyphicon-trash"></span> Delete Table
 						</a></li>
 
-						<li>
+						<!-- <li>
 							<a class="btn-table-new-page" target="_blank" href="#">
 							<span class="glyphicon glyphicon-new-window"></span> On new page</a>
-						</li>
+						</li> -->
 
 						<!-- Import/Export actions -->
-						<!-- <li class="divider"></li>
-						<li role="presentation" class="dropdown-header">
+						<li class="divider"></li>
+						<li>
+							<a class="btn-table-export-csv" target="_blank" href="#">
+							<span class="glyphicon glyphicon-list-alt"></span> Export to CSV</a>
+						</li>
+						<!-- <li role="presentation" class="dropdown-header">
 							<span class="glyphicon glyphicon-save"></span> Import/Export
 						</li>
 						<li><a class="btn-table-import-all" href="#">Import all teams</a></li> -->
@@ -772,6 +776,9 @@ App.Views.Table = Backbone.View.extend({
 
 		// Save link to open in new page (inside actions dropdown)
 		this.$('.btn-table-new-page').prop('href', '/tables/manage/'+this.model.id);
+
+		// Save link to export CSV in new page
+		this.$('.btn-table-export-csv').prop('href', '/tables/'+this.model.id + '.csv');
 
 		return this;
 	},

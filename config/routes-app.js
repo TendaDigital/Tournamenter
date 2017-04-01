@@ -60,6 +60,7 @@ function config(app, next){
 
   server.get('/tables/manage/:id?',       auth, ctrls.Table.manage);
   server.get('/tables/find/:id?',         auth, ctrls.Table.associated);
+  server.get('/tables/:id.csv',           auth, ctrls.Table.csv);
   server.patch('/tables/:id',             auth, ctrls.Table.update);
   restify('Table', 'tables');
 
