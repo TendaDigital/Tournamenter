@@ -73,7 +73,7 @@ dd > span{
 						<!-- <li role="presentation" class="dropdown-header">
 							<span class="glyphicon glyphicon-save"></span> Import/Export
 						</li>
-						<li><a class="btn-table-import-all" href="#">Import all teams</a></li> -->
+						<li><a class="btn-table-import" href="#">Import all teams</a></li> -->
 					</ul>
 				</div>
 
@@ -299,7 +299,7 @@ dd > span{
 					<li role="presentation" class="dropdown-header">
 						<span class="glyphicon glyphicon-save"></span> Import/Export
 					</li>
-					<li><a class="btn-table-import-all" href="#">Import all teams</a></li>
+					<li><a class="btn-table-import" href="#">Import teams</a></li>
 				</ul>
 			</div>
 			<!-- <button class="btn-team-add btn btn-xs btn-success">
@@ -360,6 +360,14 @@ dd > span{
 					Use this tool to import all teams into a Table at once. Note that It will not remove duplicate teams. However, you can choose not to import already imported teams.
 				</div>
 
+				<div class="form-group">
+					<label>Only team names that starts with: <small>(leave empty to not apply filter)</small></label>
+					<input type="text" class="form-control input-sm name-startswith">
+				</div>
+				<div class="form-group">
+					<label>Only team names that includes: <small>(leave empty to not apply filter)</small></label>
+					<input type="text" class="form-control input-sm name-includes">
+				</div>
 
 				<div class="checkbox">
 					<label>
@@ -721,7 +729,7 @@ App.Views.Table = Backbone.View.extend({
 		'click .btn-table-refresh': 'refresh',
 		'click .btn-table-destroy': 'confirmDestroyAction',
 		'click .btn-team-add': 'addTeam',
-		'click .btn-table-import-all': 'importFromTeams',
+		'click .btn-table-import': 'importFromTeams',
 	},
 
 	initialize: function(){
@@ -993,10 +1001,14 @@ App.Views.Table = Backbone.View.extend({
 		$modal = $('#modal-import-from-teams')
 		$confirmBtn = $modal.find('.btn-confirm');
 		$avoidDuplicates = $modal.find('.avoid-duplicates');
+		$nameStartsWith = $modal.find('.name-startswith');
+		$nameIncludes = $modal.find('.name-includes');
 
 		// Reset events and states
 		$confirmBtn.unbind('click').click(performImport);
 		$avoidDuplicates.prop('checked', true);
+		$nameStartsWith.val('')
+		$nameIncludes.val('')
 
 		// Show Modal
 		$modal.modal('show');
@@ -1008,7 +1020,26 @@ App.Views.Table = Backbone.View.extend({
 			var allTeams = [];
 			var rawTeams = App.teamList;
 			for(var k in rawTeams)
-				allTeams.push(rawTeams[k].id);
+				allTeams.push({ name: rawTeams[k].text, id: rawTeams[k].id });
+
+			/*
+			 * Filter startsWith and includes
+			 */
+			var nameStartsWith = $nameStartsWith.val();
+			if (nameStartsWith) {
+				allTeams = allTeams.filter(function (team) {
+					return (team.name || '').startsWith(nameStartsWith)
+				})
+			}
+
+			var nameIncludes = $nameIncludes.val();
+			if (nameIncludes) {
+				allTeams = allTeams.filter(function (team) {
+					console.log(team.name, nameIncludes, (team.name || '').indexOf(nameIncludes) >= 0)
+					return (team.name || '').indexOf(nameIncludes) >= 0
+				})
+			}
+
 
 			/*
 				To avoid duplicates, we must get all current teams on table,
@@ -1030,7 +1061,7 @@ App.Views.Table = Backbone.View.extend({
 				// Remove all keys that are currentlu in keyedCurrentTeams
 				var filteredTeams = [];
 				for(var k in allTeams){
-					var teamExist = keyedCurrentTeams[allTeams[k]];
+					var teamExist = keyedCurrentTeams[allTeams[k].id];
 					if(!teamExist)
 						filteredTeams.push(allTeams[k]);
 				}
@@ -1040,7 +1071,7 @@ App.Views.Table = Backbone.View.extend({
 			/*
 				Import teamlist
 			*/
-			self.importList(allTeams, function(){
+			self.importList(_.pluck(allTeams, 'id'), function(){
 				$modal.modal('hide');
 			});
 		}
