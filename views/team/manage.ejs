@@ -33,7 +33,7 @@
 			<table class="team-table table table-striped table-responsive table-hover">
 				<thead>
 					<tr>
-						<th>Country</th>
+						<th>Location</th>
 						<th>Name</th>
 						<th></th>
 					</tr>
@@ -197,20 +197,20 @@ App.Views.Team = Backbone.View.extend({
 		}
 
 		App.Mixins.editInPlace(this.model, field, {
-			type: 'select2',
+			// type: 'select2',
 
-			escape: false,
+			// escape: false,
 			value: this.model.get('country'),
-			source: Util.countries,
+			// source: Util.countries,
 
-			select2: {
-				width: 150,
-				placeholder: 'Select Country',
-				allowClear: true,
+			// select2: {
+			// 	width: 150,
+			// 	placeholder: 'Select Location',
+			// 	allowClear: true,
 
-			    formatSelection: format,
-			    escapeMarkup: function(m) { return m; },
-			}
+			//     formatSelection: format,
+			//     escapeMarkup: function(m) { return m; },
+			// }
 		});
 		return this;
 	},

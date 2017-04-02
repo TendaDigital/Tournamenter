@@ -18,7 +18,7 @@ module.exports = {
 		},
 		country: {
 			type: 'string',
-			defaultsTo: '?'
+			defaultsTo: null
 		},
 
 		/*
