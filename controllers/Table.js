@@ -88,9 +88,10 @@ module.exports = {
 			if (err)
 				return next(err)
 
+			let BOM = "\uFEFF";
 			res.attachment(title+'.csv')
 			res.set('Content-Type', 'text/csv');
-			res.status(200).send(csv);
+			res.status(200).send(BOM + csv);
 		}
 	},
 
