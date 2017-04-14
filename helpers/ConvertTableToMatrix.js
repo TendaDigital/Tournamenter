@@ -1,6 +1,4 @@
-const toCsv = require('csv-stringify')
-
-module.exports = function (table, next) {
+module.exports = function (table) {
   if (!table)
     return null;
 
@@ -33,13 +31,5 @@ module.exports = function (table, next) {
     rows.push(row)
   })
 
-  // Add Metadata
-  rows.push([''])
-  rows.push(['--'])
-  rows.push(['Table:', table.name])
-  rows.push(['Server:', app.config.appName])
-  rows.push(['Generated in:', new Date().toISOString()])
-
-  // Generate CSV
-  toCsv(rows, next)
+  return rows
 }

@@ -80,8 +80,18 @@ module.exports = {
 			// Save name for download purposes
 			title = data.name
 
+			// Generate matrix with Table
+			var matrix = app.helpers.ConvertTableToMatrix(data)
+
+			// Create metadata
+			var metadata = {
+				'Table': data.name,
+				'Server': app.config.appName,
+				'Generated in': new Date().toISOString(),
+			}
+
 			// Process CSV from table
-			app.helpers.TableToCSV(data, finishRender)
+			app.helpers.ConvertMatrixToCSV(matrix, metadata, finishRender)
 		}
 
 		function finishRender(err, csv) {
