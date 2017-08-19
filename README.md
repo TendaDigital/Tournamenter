@@ -6,7 +6,7 @@
 [npm-version-image]: https://img.shields.io/npm/v/tournamenter.svg?style=flat
 [npm-version-url]: https://www.npmjs.com/package/tournamenter
 
-**Don't like to use Terminal? Use the Native Desktop Application for managing Server instances on Windows, Linux and Mac OSx:** [TournamenterApp](https://github.com/ivanseidel/TournamenterApp)
+**Don't like to use Terminal? Use the Native Desktop Application for managing Server instances on Windows, Linux and Mac OSx:** [TournamenterApp](http://tournamenter.tenda.digital/)
 
 View a Demo hosted @ heroku: [Tournamenter DEMO](http://tournamenter-demo.herokuapp.com/)
 
