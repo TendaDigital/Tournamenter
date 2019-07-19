@@ -1317,7 +1317,7 @@ the specific language governing permissions and limitations under the Apache Lic
             this.dropdown.attr("id", "select2-drop");
 
             // show the elements
-            mask.show();
+            setTimeout(function () { mask.show(); }, 500);
 
             this.positionDropdown();
             this.dropdown.show();
