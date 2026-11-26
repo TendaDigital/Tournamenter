@@ -13,6 +13,9 @@ module.exports = function standings(host) {
     const teams = byId(await Team.find({ id: [...new Set(rows.map(row => row.teamId))] }));
     const byTable = _.groupBy(rows, 'tableId');
     for (const table of tables) {
+      // Old event files may predate both column settings. Their single score
+      // column must be visible in the JSON snapshot as well as its header.
+      table.columns ??= 1;
       if (isView) table.columns = table.viewColumns || table.columns;
       table.scores = byTable[table.id] || [];
       table.calculate();

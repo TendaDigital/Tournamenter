@@ -36,7 +36,8 @@ async function createApplication({ env = process.env, sessionStore } = {}) {
     registerRoutes(host);
     return host;
   } catch (error) {
-    await close();
+    // Earlier extensions may have attached timers or other resources to close.
+    await host.close();
     throw error;
   }
 }

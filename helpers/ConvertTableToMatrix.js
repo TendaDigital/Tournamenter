@@ -4,7 +4,7 @@ module.exports = function (table) {
 
   var scores = table.scores
   var headers = table.headers
-  var scoreColumns = parseInt(table.columns)
+  var scoreColumns = headers.scores.length
   var headerColumns = 3 // RANK, NAME and FINAL
 
   // Generate rows
@@ -20,7 +20,7 @@ module.exports = function (table) {
     
     // Add scores (Makes sure the size is fixed)
     _.times(scoreColumns, function (n) {
-      row.push(n in line.scores ? line.scores[n].value : '-')
+      row.push(line.scores?.[n]?.value ?? '-')
     })
 
     // Add final score

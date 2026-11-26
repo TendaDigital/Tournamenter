@@ -222,7 +222,7 @@ module.exports = Table;
 function generateTableHeaders(table){
 	// Save to allow in function referencte
 	table = table || this;
-	var columns = table.columns*1;
+	var columns = Number(table.columns ?? Table.attributes.columns.defaultsTo);
 
 	/*
 		Create headers array
@@ -231,12 +231,12 @@ function generateTableHeaders(table){
 
 	var headers = {};
 
-	headers['rank'] = table.headerRank;
-	headers['team'] = table.headerTeam;
+	headers['rank'] = table.headerRank ?? Table.attributes.headerRank.defaultsTo;
+	headers['team'] = table.headerTeam ?? Table.attributes.headerTeam.defaultsTo;
 	headers['scores'] = getScoreHeadersNames(table);
 
 	// Add last header (Final score)
-	headers['final'] = table.headerFinal;
+	headers['final'] = table.headerFinal ?? Table.attributes.headerFinal.defaultsTo;
 
 	// Self assign headers and return
 	table.headers = headers;
@@ -259,13 +259,14 @@ function generateTableHeaders(table){
 */
 function getScoreHeadersNames(table){
 	var tableHeaders = [];
-	var columns = table.columns*1;
+	var columns = Number(table.columns ?? Table.attributes.columns.defaultsTo);
 
+	const header = table.headerScore ?? Table.attributes.headerScore.defaultsTo;
 	// Way one, array of strings
-	if(table.headerScore.indexOf(',') >= 0){
+	if(header.indexOf(',') >= 0){
 
 		// Explode string
-		tableHeaders = table.headerScore.split(',');
+		tableHeaders = header.split(',');
 
 		// Remove extra columns
 		for(var i = tableHeaders.length; i > columns ; i--)
@@ -281,7 +282,7 @@ function getScoreHeadersNames(table){
 	}else{
 
 		// Generate headers
-		var prepend = table.headerScore + ' ';
+		var prepend = header + ' ';
 		for(var i = 0; i < columns; i++)
 			tableHeaders.push(prepend + (i + 1));
 	}
@@ -295,7 +296,7 @@ function getScoreHeadersNames(table){
 function generateTableDataInsideScores(table){
 	// Save to allow in function referencte
 	table = table || this;
-	var columns = table.columns*1;
+	var columns = Number(table.columns ?? Table.attributes.columns.defaultsTo);
 
 	/*
 		Create data table
@@ -307,7 +308,7 @@ function generateTableDataInsideScores(table){
 		console.log('Table is empty!');
 
 	// Get evaluation method ('min', 'max', custom...)
-	var evalMethod = getMethodFor(table.evaluateMethod);
+	var evalMethod = getMethodFor(table.evaluateMethod ?? Table.attributes.evaluateMethod.defaultsTo);
 
 	// List of all the keys to sort
 	var keysToSort = ['final'];
@@ -346,7 +347,7 @@ function generateTableDataInsideScores(table){
 
 			// Get value and add to scoreValues
 			var value = null;
-			if(score.scores[i])
+			if(score.scores?.[i])
 				value = score.scores[i].value;
 
 			scoreValues.push(value);
@@ -387,7 +388,7 @@ function generateTableDataInsideScores(table){
 	// Sort by 'final' field and reverse if needed
 	var finalData = _.sortBy(scores, keysToSort);
 
-	if(table.sort == 'desc')
+	if((table.sort ?? Table.attributes.sort.defaultsTo) === 'desc')
 		finalData = finalData.reverse();
 
 	// Rank Table
