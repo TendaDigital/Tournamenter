@@ -1,0 +1,33 @@
+name: Tournamenter
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:8
+        ports: ['27017:27017']
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      TOURNAMENTER_TEST_MONGO_URL: mongodb://127.0.0.1:27017
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            client/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm test
+      - run: npx playwright install --with-deps chromium
+        working-directory: client
+      - run: npm --prefix client run test:e2e
+      - run: npm run test:package

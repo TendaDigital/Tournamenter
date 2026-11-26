@@ -1,4 +1,4 @@
-const toCsv = require('csv-stringify')
+const { stringify: toCsv } = require('csv-stringify')
 
 module.exports = function (matrix, metadata, next) {
   metadata = metadata || {}

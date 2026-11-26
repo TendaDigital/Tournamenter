@@ -1,0 +1,88 @@
+#__next {
+  min-height: 100%;
+  height: 100%;
+}
+.tr-editable {
+  color: #337ab7;
+  background: transparent;
+  border: 0;
+  border-bottom: dashed 1px;
+  padding: 0;
+  font: inherit;
+  text-align: inherit;
+}
+.tr-dialog {
+  position: fixed;
+  border: 0;
+  padding: 0;
+  width: min(600px, 94vw);
+  overflow: auto;
+  max-height: 90vh;
+  background: transparent;
+  border-radius: 6px;
+}
+.tr-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+.tr-dropdown {
+  position: relative;
+  display: inline-block;
+}
+.tr-dropdown summary {
+  list-style: none;
+}
+.tr-dropdown summary::-webkit-details-marker {
+  display: none;
+}
+.tr-dropdown[open] > .dropdown-menu {
+  display: block;
+  padding: 5px;
+  min-width: max-content;
+}
+.tr-dropdown .dropdown-menu > * {
+  display: block;
+  margin: 3px 0;
+}
+.tr-dropdown.nav-dropdown {
+  display: block;
+}
+.tr-dropdown.nav-dropdown > summary {
+  padding: 15px;
+  line-height: 20px;
+  color: #777;
+  cursor: pointer;
+}
+.tr-dropdown.nav-dropdown .dropdown-menu {
+  padding: 5px 0;
+}
+.tr-dropdown.nav-dropdown .dropdown-menu > li {
+  margin: 0;
+}
+.tr-columns > dt,
+.tr-columns > dd {
+  margin-bottom: 4px;
+}
+.tr-match {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+.tr-match .match-team {
+  flex: 1 1 10%;
+}
+.tr-match .label .tr-editable {
+  color: inherit;
+}
+.tr-match .btn-group {
+  white-space: nowrap;
+}
+.tr-slide-center {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pageview-bracket .bracket-container {
+  transform: translate(-50%, -50%);
+}

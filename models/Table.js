@@ -564,75 +564,25 @@ Table.evaluateMethodsNames = {
 	Read on top (EVALUATE METHODS LOGIC) to know more about what
 	this is doing.
 */
-function getMethodFor(methodRaw){
-	// Else, try to return a new function with it
-	try{
-		var method = Function('scores', methodRaw);
-		method([]);
-		return method;
-	}catch(err){
-		console.log('getMethodFor parsing error: '+err);
-	}
-
-	// Split method in dots
-	var methods = methodRaw.split('.');
-
-	/*
-		Try to parse as separate functions.
-		We expect at least two methods separated by `.` (dots)
-
-		If not, we will thread it right after, as a default function
-		or a custom one
-	*/
-	try {
-		if(methods.length > 1){
-
-			// Default function to resolve methods
-			function resolveMethod(wrapedMethod, methodRaw){
-
-				// Get method string and `methodify` it recursivelly
-				var method = getMethodFor(methodRaw);
-
-				// Check if method is ok to continue, or, return null
-				if(!method) throw new Error('Could not parse method: '+methodRaw);
-
-				// Create a wrapped method of the current one, with this one
-				return function(scores){
-					return wrapedMethod(method(scores));
-				}
-			}
-
-			// Go trough array, wraping methods
-			var finalMethod = _.reduceRight(
-				methods,
-				// Called for every function
-				resolveMethod,
-				// Define initial method. Just returns value
-				function(scores){
-					return scores;
-				}
-			);
-
-			// Return serie methods
-			return finalMethod;
-		}
-	} catch (e) {
-		// could not parse as custom sintax
-	}
-
-	/*
-		If only one method, resolves it like a simple function
-	*/
-	// Get methodName, and params
-	var explodedMethod = methodRaw.split(':');
-	var methodName = explodedMethod[0].trim();
-	var methodParams = Array.prototype.slice.call(explodedMethod, 1);
-
-	// Try to find in defaults
-	if(Table.evaluateMethods[methodName])
-		return Table.evaluateMethods[methodName].apply(null, methodParams);
-
-	return null;
+function getMethodFor(source) {
+  const stages = source.split('.').map(stage => stage.trim().split(':'));
+  if (stages.every(([name]) => Object.hasOwn(Table.evaluateMethods, name))) {
+    const methods = stages.map(([name, ...args]) => Table.evaluateMethods[name](...args));
+    return scores => methods.reduce((value, method) => method(value), scores);
+  }
+  // Custom formulas from existing events run in an isolated JS interpreter.
+  // Only the score values cross the boundary, including for offline events.
+  const { getQuickJSSync, shouldInterruptAfterDeadline } = require('quickjs-emscripten');
+  return scores => {
+    try {
+      return getQuickJSSync().evalCode('((scores) => {' + source + '\n})(' + JSON.stringify(scores) + ')', {
+        memoryLimitBytes: 4 * 1024 * 1024,
+        shouldInterrupt: shouldInterruptAfterDeadline(Date.now() + 25),
+      });
+    } catch {
+      return '?';
+    }
+  };
 }
 
 /*

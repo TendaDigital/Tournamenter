@@ -12,7 +12,6 @@ module.exports = function (table) {
 
   // Push Header
   var header = _.flatten([headers.rank, headers.team, headers.scores, headers.final])
-  console.log(header)
   rows.push(header)
 
   // Push data

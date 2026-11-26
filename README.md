@@ -1,119 +1,71 @@
 ![Tournamenter](media/Tournamenter.png)
-[![NPM Version][npm-version-image]][npm-version-url]
 
-> Manage Tournament events - Scores, Tables, Groups and Public Views.
+# Tournamenter
 
-[npm-version-image]: https://img.shields.io/npm/v/tournamenter.svg?style=flat
-[npm-version-url]: https://www.npmjs.com/package/tournamenter
+Run a tournament on a local network. Organizers manage teams, matches, scoring tables and rotating displays. Spectators open the public views from a browser on the same network. The server, fonts, styles, flags, scripts and ranking engine run on the event computer.
 
-**Don't like to use Terminal? Use the Native Desktop Application for managing Server instances on Windows, Linux and Mac OSx:** [TournamenterApp](http://tournamenter.tenda.digital/)
+## Run from source
 
-View a Demo hosted @ heroku: [Tournamenter DEMO](http://tournamenter-demo.herokuapp.com/)
+Use Node.js 22.11 or newer. The maintained desktop build uses Node.js 24.
 
-![Tournamenter GIF](media/Tournamenter.gif)
-
-## Installation
-```bash
-$ npm install -g tournamenter
+```sh
+npm ci
+npm run build
+npm start
 ```
 
-## Execution
-```bash
-$ tournamenter
-```
+Open `http://localhost:3000`. Other devices use the server computer's LAN address and port. Installing dependencies needs internet. Starting the built server, managing an event and displaying local slides work offline. Online imports and synchronization in extensions need their external services.
 
-## Management
-> Tournamenter is made for Organizers and the Public.
+The browser interface uses React and Next.js static export. The desktop launcher packages the export and the Node server together. To install the companion application, see [TournamenterApp](https://github.com/TendaDigital/TournamenterApp).
 
-All the components of tournamenter allows to generate beautifull and configurable Live UI to 
-show on TV's, Projectors and even Online. Management is restricted for Organizers.
+## Event administration
 
-But, we provide you with 'views': Customizable Presentations that renders real-time data for
-the public. Just like "Power Point" presentations, but dynamic and alive.
+| Page | Use |
+| --- | --- |
+| `/teams/manage` | Create teams and edit names and locations |
+| `/groups/manage` | Schedule games and manage group standings |
+| `/tables/manage` | Configure columns, import teams, enter scores and download CSV |
+| `/views/manage` | Compose and order slides for a display |
+| `/views/view` | Open a public presentation |
 
-## Management: Teams
-> Manage Teams of your Event/People of your event. Create/Delete/Modify Team names and Country.
-![Teams Manager](media/tournamenter-teams.gif)
+The administrative ranking uses the full column count. **Score Columns (View)** limits the columns used to compute and display public results. Existing named ranking methods, method chains and score-only JavaScript formulas are supported. Custom JavaScript runs in an embedded QuickJS interpreter with the score array as input. Extensions register named methods for scoring rules that need host services.
 
+## Server settings
 
-## Management: Groups
-> Manage Groups Phases, Create matches and setup schedule.
-![Teams Manager](media/tournamenter-groups.gif)
+| Variable | Purpose |
+| --- | --- |
+| `PORT`, `HOST` | Defaults to port 3000 on all interfaces |
+| `APP_UID`, `APP_NAME`, `APP_LOGO` | Event identifier, display name and path to a local logo |
+| `PASSWORD` | Organizer password. Leave empty for an open local event |
+| `DB_FOLDER` or `DB_PATH` | Event directory or full path to a .db file. The default is .tmp/&lt;APP_UID&gt;.db in the application directory |
+| `DB_ADAPTER` | disk (default), mongo or memory. The original sails-disk, sails-mongo and sails-memory values also work |
+| `DB_URL` | MongoDB connection string including the event database name when using mongo |
+| `SESSION_SECRET` | Optional signing secret. Local sessions otherwise use a fresh secret at startup |
+| `TOURNAMENTER_EXTENSIONS_JSON` | JSON array of local extension paths, including Windows paths |
+| `TOURNAMENTER_EXTENSIONS` | Legacy path list, separated by the platform path delimiter, comma or semicolon |
 
+The disk adapter reads the original sails-disk file format. Writes retain the other collections, schema metadata, counters and extension fields in that file. For an existing event, stop its old server and copy its .db file before opening it with the new version. The desktop app keeps a separate event file per server profile. MongoDB uses the native driver and retains legacy collection names and ObjectId lookup.
 
-## Management: Tables
-> Manage Tables. Configure Scoring tables, customize ranking algorithm.
-![Teams Manager](media/tournamenter-tables.gif)
+## Extensions
 
+The [OBR plugin](https://github.com/ivanseidel/tournamenter-obr) provides judging, OBR ranking methods and Olimpo integration. Build the React version of that plugin before starting the server with its directory in the extension list.
 
-## Management: Views
-> Manage Displays. Link multiple Groups, Tables, Messages and everything together for the public
-![Teams Manager](media/tournamenter-views.gif)
+An extension exports a CommonJS object. The host creates its models and controllers, calls `getAssets(host)` to register guards and serve local asset roots, then calls `initialize(host)` before the core routes. Extensions can contribute menus and replace the home route. Model reads and writes support promises, callbacks and `.exec(callback)`. Run one event per process when using extensions that depend on the legacy global app.
 
+A presentation extension may provide `type: 'pageview'` and `client: { name, entry }`. Serve the ES module at the same-origin path named by `entry`. Its `Display` and optional `Configure` components receive React and the current page. The configuration editor can call `saveOptions`. The server-side `process(page, callback)` hook supplies the display data. See the [tested page extension](client/test/fixture-pageview/index.js).
 
-### Server Configuration: Basics
-> Configurations are assigned by Environmental Variables.
+## Hosted edition
 
-- `PORT`: (default: _3000_)
-  Port the server will Bind to
+`require('tournamenter').createApplication({ env, sessionStore })` initializes the Express request handler as `host.server`. It opens storage without binding a TCP port. The desktop CLI calls `listen()` around that handler. A future Vercel function can reuse the initialized application within an instance. Serve the exported client assets from the CDN and send the application paths and API requests to the handler.
 
-- `APP_UID`: (default: _tournamenter_)
-  An identification (lowercase and no spaces) for the application.
-  It's like a "namespace", and is used for database creation and connection.
+Use a persistent event database and a shared Express session store for hosted instances. Configure a stable session signing secret and organizer authentication. The local OBR volunteer credential file, in-memory sessions and interval-based synchronization need shared persistence and a scheduled job for an online edition. Vercel Functions use instance-local temporary storage. See [Vercel runtime storage](https://vercel.com/docs/functions/runtimes#file-system-support) and [Next.js static exports](https://nextjs.org/docs/app/guides/static-exports).
 
-- `APP_NAME`: (default: _tournamenter_)
-  Your application name. Usually, the name of the Event
+## Verification
 
-- `APP_LOGO`: (default: _[internal_tournament_logo]_)
-  Absolute Path to the Logo. Prefer `.png` files to ugly white backgrounds.
+`npm test` covers legacy disk data, concurrent edits, login, CRUD, standings, presentations and CSV. Set `TOURNAMENTER_TEST_MONGO_URL` to test the native driver against MongoDB. The suite creates a uniquely named test database and removes it when the test finishes.
 
-- `PASSWORD`: (default: _[none]_)
-  Set's the password required to login. (There is no username)
+After a client build, run `npx --prefix client playwright install chromium` and `npm --prefix client run test:e2e` for browser tests. The CI workflow also checks the packed CLI.
 
-### Server Configuration: Database
-> Tournamenter uses Waterline ORM. It allows file db (default) and even MongoDB, MySql...
+## Credits
 
-**Disk DB: Saves to a `.json` file**
-- `DB_ADAPTER`: (default: `sails-disk`)
-  `sails-disk` is already the default one. No need to change
-- `DB_PATH`: (default: `./tmp/[APP_UID].db`)
-  Change this to reflect where the db file will be stored.
-
-It `DB_PATH` can be either:
-- An Path to a **Folder**:
-  Will use file `DB_PATH/[APP_UID].db` as db (ex: `~/`)
-- An Path to a **File**:
-  Will use file `DB_PATH` as db (ex: `~/mydb.db`)
-
-**MongoDB: Connects to a MongoDB Server**
-- `DB_ADAPTER`: (default: `sails-disk`)
-  Set to `sails-mongo` in order to change to MongoDB
-- `DB_URL`:
-  An formated MongoDB URI ([Go Here for information](https://docs.mongodb.com/manual/reference/connection-string/))
-
-### Server Configuration: Extensions
-> Tournamenter allows dynamic loading setup of Extensions. It only requires a list of PATH's to load.
-
-Dependencies are NodeJS Modules. They are given hooks to inject and modify Tournamenter Behavior.
-
-To Run tournamenter with an Exension, provide:
-- `TOURNAMENTER_EXTENSIONS`:
-  With a list of absolute paths, separated by `:` or `,`. Ex: `~/myextensionA:~/myextB`
-
-### Examples
-
-> **Example 1**
-> Running in PORT 4000, Setting LOGO and Changing name to `My Event`
-```bash
-PORT=4000 APP_LOGO=~/event.png APP_NAME="My Event" tournamenter
-```
-
-> **Example 2**
-> Running in PORT 4000, Use custom database path
-```bash
-PORT=4000 DB_PATH=~/myfolder/event.db tournamenter
-```
-
-### Credits
-
-Creator: [Ivan Seidel](https://github.com/ivanseidel)
+Created by [Ivan Seidel](https://github.com/ivanseidel). Released under the MIT license.

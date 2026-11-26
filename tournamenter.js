@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('../app.js')
+require('./bin/tournamenter').start();
