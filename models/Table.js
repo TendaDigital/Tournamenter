@@ -222,7 +222,7 @@ module.exports = Table;
 function generateTableHeaders(table){
 	// Save to allow in function referencte
 	table = table || this;
-	var columns = table.columns*1;
+	var columns = Number(table.columns ?? Table.attributes.columns.defaultsTo);
 
 	/*
 		Create headers array
@@ -231,12 +231,12 @@ function generateTableHeaders(table){
 
 	var headers = {};
 
-	headers['rank'] = table.headerRank;
-	headers['team'] = table.headerTeam;
+	headers['rank'] = table.headerRank ?? Table.attributes.headerRank.defaultsTo;
+	headers['team'] = table.headerTeam ?? Table.attributes.headerTeam.defaultsTo;
 	headers['scores'] = getScoreHeadersNames(table);
 
 	// Add last header (Final score)
-	headers['final'] = table.headerFinal;
+	headers['final'] = table.headerFinal ?? Table.attributes.headerFinal.defaultsTo;
 
 	// Self assign headers and return
 	table.headers = headers;
@@ -259,13 +259,14 @@ function generateTableHeaders(table){
 */
 function getScoreHeadersNames(table){
 	var tableHeaders = [];
-	var columns = table.columns*1;
+	var columns = Number(table.columns ?? Table.attributes.columns.defaultsTo);
 
+	const header = table.headerScore ?? Table.attributes.headerScore.defaultsTo;
 	// Way one, array of strings
-	if(table.headerScore.indexOf(',') >= 0){
+	if(header.indexOf(',') >= 0){
 
 		// Explode string
-		tableHeaders = table.headerScore.split(',');
+		tableHeaders = header.split(',');
 
 		// Remove extra columns
 		for(var i = tableHeaders.length; i > columns ; i--)
@@ -281,7 +282,7 @@ function getScoreHeadersNames(table){
 	}else{
 
 		// Generate headers
-		var prepend = table.headerScore + ' ';
+		var prepend = header + ' ';
 		for(var i = 0; i < columns; i++)
 			tableHeaders.push(prepend + (i + 1));
 	}
@@ -295,7 +296,7 @@ function getScoreHeadersNames(table){
 function generateTableDataInsideScores(table){
 	// Save to allow in function referencte
 	table = table || this;
-	var columns = table.columns*1;
+	var columns = Number(table.columns ?? Table.attributes.columns.defaultsTo);
 
 	/*
 		Create data table
@@ -307,7 +308,7 @@ function generateTableDataInsideScores(table){
 		console.log('Table is empty!');
 
 	// Get evaluation method ('min', 'max', custom...)
-	var evalMethod = getMethodFor(table.evaluateMethod);
+	var evalMethod = getMethodFor(table.evaluateMethod ?? Table.attributes.evaluateMethod.defaultsTo);
 
 	// List of all the keys to sort
 	var keysToSort = ['final'];
@@ -346,7 +347,7 @@ function generateTableDataInsideScores(table){
 
 			// Get value and add to scoreValues
 			var value = null;
-			if(score.scores[i])
+			if(score.scores?.[i])
 				value = score.scores[i].value;
 
 			scoreValues.push(value);
@@ -387,7 +388,7 @@ function generateTableDataInsideScores(table){
 	// Sort by 'final' field and reverse if needed
 	var finalData = _.sortBy(scores, keysToSort);
 
-	if(table.sort == 'desc')
+	if((table.sort ?? Table.attributes.sort.defaultsTo) === 'desc')
 		finalData = finalData.reverse();
 
 	// Rank Table
@@ -564,75 +565,25 @@ Table.evaluateMethodsNames = {
 	Read on top (EVALUATE METHODS LOGIC) to know more about what
 	this is doing.
 */
-function getMethodFor(methodRaw){
-	// Else, try to return a new function with it
-	try{
-		var method = Function('scores', methodRaw);
-		method([]);
-		return method;
-	}catch(err){
-		console.log('getMethodFor parsing error: '+err);
-	}
-
-	// Split method in dots
-	var methods = methodRaw.split('.');
-
-	/*
-		Try to parse as separate functions.
-		We expect at least two methods separated by `.` (dots)
-
-		If not, we will thread it right after, as a default function
-		or a custom one
-	*/
-	try {
-		if(methods.length > 1){
-
-			// Default function to resolve methods
-			function resolveMethod(wrapedMethod, methodRaw){
-
-				// Get method string and `methodify` it recursivelly
-				var method = getMethodFor(methodRaw);
-
-				// Check if method is ok to continue, or, return null
-				if(!method) throw new Error('Could not parse method: '+methodRaw);
-
-				// Create a wrapped method of the current one, with this one
-				return function(scores){
-					return wrapedMethod(method(scores));
-				}
-			}
-
-			// Go trough array, wraping methods
-			var finalMethod = _.reduceRight(
-				methods,
-				// Called for every function
-				resolveMethod,
-				// Define initial method. Just returns value
-				function(scores){
-					return scores;
-				}
-			);
-
-			// Return serie methods
-			return finalMethod;
-		}
-	} catch (e) {
-		// could not parse as custom sintax
-	}
-
-	/*
-		If only one method, resolves it like a simple function
-	*/
-	// Get methodName, and params
-	var explodedMethod = methodRaw.split(':');
-	var methodName = explodedMethod[0].trim();
-	var methodParams = Array.prototype.slice.call(explodedMethod, 1);
-
-	// Try to find in defaults
-	if(Table.evaluateMethods[methodName])
-		return Table.evaluateMethods[methodName].apply(null, methodParams);
-
-	return null;
+function getMethodFor(source) {
+  const stages = source.split('.').map(stage => stage.trim().split(':'));
+  if (stages.every(([name]) => Object.hasOwn(Table.evaluateMethods, name))) {
+    const methods = stages.map(([name, ...args]) => Table.evaluateMethods[name](...args));
+    return scores => methods.reduce((value, method) => method(value), scores);
+  }
+  // Custom formulas from existing events run in an isolated JS interpreter.
+  // Only the score values cross the boundary, including for offline events.
+  const { getQuickJSSync, shouldInterruptAfterDeadline } = require('quickjs-emscripten');
+  return scores => {
+    try {
+      return getQuickJSSync().evalCode('((scores) => {' + source + '\n})(' + JSON.stringify(scores) + ')', {
+        memoryLimitBytes: 4 * 1024 * 1024,
+        shouldInterrupt: shouldInterruptAfterDeadline(Date.now() + 25),
+      });
+    } catch {
+      return '?';
+    }
+  };
 }
 
 /*

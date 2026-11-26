@@ -1,105 +1,68 @@
-var TAG = 'app';
+const express = require('express');
+const { getQuickJS } = require('quickjs-emscripten');
+const configuration = require('./config/config');
+const { openModels } = require('./server/models');
+const { controllers } = require('./server/controllers');
+const { configureHTTP, registerRoutes } = require('./server/http');
 
-/*
- * This snippet allows the app to be runned from
- * another working directory without concerns.
- */
-try {
-  process.chdir(__dirname);
-} catch (e) {
-  console.error(TAG, 'Could not set cwd to Tournamenter path. Might cause problems.')
-}
-
-/**
- * Module dependencies
- */
-
-var async = require('async');
-
-/**
- * Global App Object
- */
-var app = {
-  config: require('./config/config'),
-};
-
-/**
- * Define Globals
- */
-global.app = app;
-
-global._ = require('lodash');
-global.async = require('async');
-global.chalk = require('chalk');
-global._TAG = function (tag, color = 'cyan'){
-  return chalk[color](`[${tag}]`);
-}
-
-
-/*
- * Bootstrap Process
- */
-var configSetps = [
-  // Setup Logging
-  // require('./config/log'),
-
-  // Bootstrap Helpers
-  require('./config/helpers'),
-
-  // Load app modules
-  require('./config/modules-load'),
-
-  // Bootstrap Models and connect to DB
-  require('./config/models'),
-
-  // Bootstrap Controllers
-  require('./config/controllers'),
-
-  // Bootstrap application settings
-  require('./config/express'),
-
-  // Setup view engine (EJS)
-  require('./config/view-engine'),
-
-  // Setup express veiw Locals (global variables)
-  require('./config/view-locals'),
-
-  // Build Assets
-  require('./config/build'),
-
-  // Start static serving on /public folder
-  require('./config/express-assets'),
-
-  // Bootstrap API routes
-  require('./config/routes-app'),
-
-  // Initialize Modules
-  require('./config/modules-initialize'),
-
-  // Bootstrap routes
-  require('./config/routes'),
-
-  // Start Server
-  require('./config/lift'),
-];
-
-module.exports = function lift(cb){
-  async.eachSeries(configSetps, function (config, next){
-    // Call configuration step with the app, and the callback
-    config(app, next);
-  }, function (err){
-    if(err){
-      console.error(_TAG(TAG), 'Failed to initialize Server: %s', err);
-
-      if(!cb) throw err;
-      cb && cb(err)
+async function createApplication({ env = process.env, sessionStore } = {}) {
+  const config = configuration(env);
+  await getQuickJS();
+  const { models, close } = await openModels(config);
+  const host = { config, models, server: express(), helpers: {}, close };
+  try {
+    // The CommonJS extension API historically provides these process globals.
+    global.app = host;
+    global._ = require('lodash');
+    global.async = require('async');
+    global._TAG = tag => '[' + tag + ']';
+    host.helpers.Modules = require('./helpers/Modules')();
+    host.helpers.isAuthenticated = (req, res, next) => {
+      if (!config.password || req.session?.authentication === config.password) return next();
+      if (req.accepts(['html','json']) === 'json') return res.status(401).json({error: 'Login required'});
+      return res.redirect('/login');
+    };
+    host.helpers.ConvertTableToMatrix = require('./helpers/ConvertTableToMatrix');
+    host.helpers.ConvertMatrixToCSV = require('./helpers/ConvertMatrixToCSV');
+    host.controllers = controllers(host);
+    configureHTTP(host, { sessionStore });
+    for (const dir of config.extensions) host.helpers.Modules.loadModule(dir);
+    const extensions = Object.values(host.helpers.Modules.modules);
+    for (const extension of extensions) {
+      const assets = extension.getAssets?.(host);
+      for (const dir of assets?.serve || []) host.server.use(express.static(dir));
     }
-
-    console.log(_TAG(TAG, 'green'), 'Lifted. Port:', app.config.port, '['+app.config.env+']');
-    cb && cb();
-  });
+    for (const extension of extensions) await extension.initialize?.(host);
+    registerRoutes(host);
+    return host;
+  } catch (error) {
+    // Earlier extensions may have attached timers or other resources to close.
+    await host.close();
+    throw error;
+  }
 }
 
-// Autolift if it's the root module
-if(require.main === module)
-  module.exports();
+async function listen(options) {
+  const host = await createApplication(options);
+  try {
+    const listener = await new Promise((resolve, reject) => {
+      const server = host.server.listen(host.config.port, host.config.host, error => error ? reject(error) : resolve(server));
+    });
+    const closeStore = host.close;
+    host.close = async () => {
+      await new Promise((resolve, reject) => listener.close(error => error ? reject(error) : resolve()));
+      await closeStore();
+    };
+    host.listener = listener;
+    return host;
+  } catch (error) { await host.close(); throw error; }
+}
+
+function lift(callback) {
+  const started = listen();
+  if (callback) started.then(host => callback(null, host), callback);
+  return started;
+}
+
+module.exports = Object.assign(lift, { createApplication, listen });
+if (require.main === module) require('./bin/tournamenter').start();

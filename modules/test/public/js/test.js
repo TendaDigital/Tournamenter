@@ -1,1 +1,0 @@
-var __ok = true;
